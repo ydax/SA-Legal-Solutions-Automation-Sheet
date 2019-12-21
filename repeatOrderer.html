@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>google.script.host.closeDialog()</script>
+    <script>
+        $(document).ready(function(){
+        $('select').formSelect();
+            });
+        function getNewAutomationData(e) {
+            e.preventDefault();
+            $("button").attr("disabled", "disabled");
+            M.toast({html: 'Saving a new automation usually takes around 10 seconds. ⚙ The bees will let you know when your new automation is ready. 🐝'});
+            google.script.run.withSuccessHandler(function (text) {
+                M.toast({
+                html: text
+                });
+                $("button").removeAttr("disabled");
+                })
+                .getAutomationData($('#automationName').val(), $('#subject1').val(), $('#sendDelay1').val(), $('#timeUnit1').val(), $('#subject2').val(), $('#sendDelay2').val(), $('#timeUnit2').val(), $('#subject3').val(), $('#sendDelay3').val(), $('#timeUnit3').val(),$('#subject4').val(), $('#sendDelay4').val(), $('#timeUnit4').val(),$('#subject5').val(), $('#sendDelay5').val(), $('#timeUnit5').val(), $('#autoStop').val());
+        };
+    </script>
+</head>
+
+<body>
+    <form id="newAutomationData" onsubmit="getNewAutomationData(event)">
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <p class="flow-text">Include up to 5 Gmail drafts addressed to templates@gethoneybee.com in your automation. 🤖</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" placeholder="Enter a name for this automation" id="automationName">
+                    <label for="subject">Automation Name</label>
+                </div>
+            </div>
+            <!-- Email 1 -->
+            <div class="row">
+            <hr class="divider" />
+                <div class="input-field col s12">
+                    <select name="subject1" id="subject1">
+                    <option value="" disabled selected>Select Honeybee Template</option>
+                    <? for (var i = 0; i < subjects.length; i++) { ?>
+                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
+                        <? } ?>
+                    </select>
+                    <label for="subject1">1st Email to Send</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s7">
+                    <input type="number" value="0" id="sendDelay1">
+                    <label for="sendDelay1">Send Delay</label>
+                </div>
+                <div class="input-field col s5">
+                    <select id="timeUnit1">
+                        <option value="hrs" selected>Hours</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
+                <div class="col s12">
+                    <blockquote>
+                        <span>If 0, this sends when you add someone to this automation.</span>
+                    </blockquote>
+                </div>
+            </div>
+            <!-- Email 2 -->
+            <div class="row">
+            <hr class="divider" />
+                <div class="input-field col s12">
+                    <select name="subject2" id="subject2">
+                    <option value="" disabled selected>Select Honeybee Template</option>
+                    <? for (var i = 0; i < subjects.length; i++) { ?>
+                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
+                        <? } ?>
+                    </select>
+                    <label for="subject2">2nd Email to Send</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s7">
+                    <input type="number" value="0" id="sendDelay2">
+                    <label for="sendDelay2">Send Delay</label>
+                </div>
+                <div class="input-field col s5">
+                    <select id="timeUnit2">
+                        <option value="hrs" selected>Hours</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Email 3 -->
+            <div class="row">
+            <hr class="divider" />         
+                <div class="input-field col s12">
+                    <select name="subject3" id="subject3">
+                    <option value="" disabled selected>Select Honeybee Template</option>
+                    <? for (var i = 0; i < subjects.length; i++) { ?>
+                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
+                        <? } ?>
+                    </select>
+                    <label for="subject3">(Optional) 3rd Email to Send</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s7">
+                    <input type="number" value="0" id="sendDelay3">
+                    <label for="sendDelay3">Send Delay</label>
+                </div>
+                <div class="input-field col s5">
+                    <select id="timeUnit3">
+                        <option value="hrs" selected>Hours</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Email 4 -->
+            <div class="row">
+            <hr class="divider" />
+                <div class="input-field col s12">
+                    <select name="subject4" id="subject4">
+                    <option value="" disabled selected>Select Honeybee Template</option>
+                    <? for (var i = 0; i < subjects.length; i++) { ?>
+                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
+                        <? } ?>
+                    </select>
+                    <label for="subject4">(Optional) 4th Email to Send</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s7">
+                    <input type="number" value="0" id="sendDelay4">
+                    <label for="sendDelay4">Send Delay</label>
+                </div>
+                <div class="input-field col s5">
+                    <select id="timeUnit4">
+                        <option value="hrs" selected>Hours</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Email 5 -->
+            <div class="row">
+            <hr class="divider" />
+                <div class="input-field col s12">
+                    <select name="subject5" id="subject5">
+                    <option value="" disabled selected>Select Honeybee Template</option>
+                    <? for (var i = 0; i < subjects.length; i++) { ?>
+                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
+                        <? } ?>
+                    </select>
+                    <label for="subject5">(Optional) 5th Email to Send</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s7">
+                    <input type="number" value="0" id="sendDelay5">
+                    <label for="sendDelay5">Send Delay</label>
+                </div>
+                <div class="input-field col s5">
+                    <select id="timeUnit5">
+                        <option value="hrs" selected>Hours</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Auto-stop Enabled? -->
+            <div class="input-field col s12">
+                <select id="autoStop"> <!-- autostop save value appends to automation value -->
+                    <option value="off" selected>Autostop Off</option>
+                    <option value="on">Autostop On</option>
+                </select>
+                <label for="autoStop">Add Autostop?</label>
+            </div>
+            <div class="col s12">
+                <blockquote>
+                    <span>If autostop is on, automation cancels if you receive an email from this address after deploying.</span>
+                </blockquote>
+            </div>
+            <!-- Buttons -->
+            <div class="row">
+            <p><br></p>
+                <div class="col s12">
+                    <button class="btn" type="submit">Save This Automation</button>
+                </div>
+            </div>
+        </div> <!-- Container-->
+    </form>
+</body>
+
+</html>

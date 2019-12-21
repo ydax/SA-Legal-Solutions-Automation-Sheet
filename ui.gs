@@ -10,9 +10,19 @@
   Error            #e65100 orange darken-4
 */
 
-function myFunction() {
-  
+function onOpen (e) {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu("SA Legal Services")
+  .addItem("📝 New Deposition", "showNewOrdererSidebar")
+  .addToUi();
 }
+
+// create the new orderer deposition sidebar
+function showNewOrdererSidebar() {
+  var template = HtmlService.createTemplateFromFile('newOrderer');
+  var html = template.evaluate().setTitle('New Deposition from a New Orderer');
+  SpreadsheetApp.getUi().showSidebar(html);
+};
 
 
 /** 
@@ -24,8 +34,8 @@ REQUIREMENTS
 • Create automated reporting for Blake that generates a summary of the week's deposition activity, and sends that summary to Blake via email, weekly.
 
 WORKFLOW
-1. Modify Sheet Structure: Add Query Sheet w/ results section, modify Confirmation of Scheduling to have a status (done w/ data validation)
-2. Add in dev logging functions via properties
+X 1. Modify Sheet Structure: Add Query Sheet w/ results section, modify Confirmation of Scheduling to have a status (done w/ data validation)
+X 2. Add in dev logging functions via properties
 3. Add new deposition creation methods, verify they work (incl. population of templates)
 4. Add querying features
 5. Add in automatically-generated email feature for new depos
@@ -40,7 +50,7 @@ NOTES
 - Drop down for new clients vs. existing client w/ ordered by field and ordered by email address (this is who the confirmation email goes to)
   - Existing client needs to have the Ordered By as a field
 - Location needs to populate the address 1, city, state, zip, but the location address 2 needs to be manual)
-- Services (column V) will be manual, so will column W X
+- Services (column V) will be manual, so will column W
 - Search page on the front
    - Searching
        - By Date: Name, Ordered By, Firm
