@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>google.script.host.closeDialog()</script>
     <script>
         $(document).ready(function(){
@@ -31,171 +32,227 @@
 </head>
 
 <body>
-    <form id="newAutomationData" onsubmit="getNewAutomationData(event)">
+    <form id="newDepoData" onsubmit="getDepoData(event)">
         <div class="container">
             <div class="row">
-                <div class="col s12">
-                    <p class="flow-text">Include up to 5 Gmail drafts addressed to templates@gethoneybee.com in your automation. 🤖</p>
-                </div>
+                <h4 class="red-text text-darken-3">Enter a deposition ordered by a repeat client.</h4>
             </div>
+            <!-- Order Information -->
             <div class="row">
+                <p class="flow-text">Orderer Information</p>
                 <div class="input-field col s12">
-                    <input type="text" placeholder="Enter a name for this automation" id="automationName">
-                    <label for="subject">Automation Name</label>
+                    <i class="material-icons prefix">person</i>
+                    <input type="text" id="orderedBy" name="orderedBy">
+                    <label for="orderedBy">Ordered By</label>
                 </div>
-            </div>
-            <!-- Email 1 -->
-            <div class="row">
-            <hr class="divider" />
                 <div class="input-field col s12">
-                    <select name="subject1" id="subject1">
-                    <option value="" disabled selected>Select Honeybee Template</option>
-                    <? for (var i = 0; i < subjects.length; i++) { ?>
-                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
+                    <i class="material-icons prefix">contact_mail</i>
+                    <input type="email" class="validate" id="orderedByEmail" name="orderedByEmail">
+                    <label for="orderedByEmail">Orderer Email Address</label>
+                </div>
+                <div class="input-field col s12">
+                    <select name="previousOrderer" id="previousOrderer">
+                    <option value="" disabled selected>Select Previous Orderer</option>
+                    <? for (var i = 0; i < orderers.length; i++) { ?>
+                        <option value="<?= i; ?>"><?= orderers[i]; ?></option>
                         <? } ?>
                     </select>
-                    <label for="subject1">1st Email to Send</label>
+                    <label for="previousOrderer">Previous Orderer</label>
                 </div>
             </div>
+            <!-- Deposition Details -->
+            <hr class="divider red darken-3">
+            <p class="flow-text">Deposition Details</p>
             <div class="row">
-                <div class="input-field col s7">
-                    <input type="number" value="0" id="sendDelay1">
-                    <label for="sendDelay1">Send Delay</label>
-                </div>
-                <div class="input-field col s5">
-                    <select id="timeUnit1">
-                        <option value="hrs" selected>Hours</option>
-                        <option value="days">Days</option>
-                    </select>
-                </div>
-                <div class="col s12">
-                    <blockquote>
-                        <span>If 0, this sends when you add someone to this automation.</span>
-                    </blockquote>
-                </div>
-            </div>
-            <!-- Email 2 -->
-            <div class="row">
-            <hr class="divider" />
                 <div class="input-field col s12">
-                    <select name="subject2" id="subject2">
-                    <option value="" disabled selected>Select Honeybee Template</option>
-                    <? for (var i = 0; i < subjects.length; i++) { ?>
-                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
-                        <? } ?>
-                    </select>
-                    <label for="subject2">2nd Email to Send</label>
+                    <i class="material-icons prefix">person_outline</i>
+                    <input type="text" id="witnessName" name="witnessName">
+                    <label for="witnessName">Witness Name</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col s7">
-                    <input type="number" value="0" id="sendDelay2">
-                    <label for="sendDelay2">Send Delay</label>
-                </div>
-                <div class="input-field col s5">
-                    <select id="timeUnit2">
-                        <option value="hrs" selected>Hours</option>
-                        <option value="days">Days</option>
-                    </select>
-                </div>
-            </div>
-            <!-- Email 3 -->
-            <div class="row">
-            <hr class="divider" />         
                 <div class="input-field col s12">
-                    <select name="subject3" id="subject3">
-                    <option value="" disabled selected>Select Honeybee Template</option>
-                    <? for (var i = 0; i < subjects.length; i++) { ?>
-                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
-                        <? } ?>
-                    </select>
-                    <label for="subject3">(Optional) 3rd Email to Send</label>
+                    <i class="material-icons prefix">gavel</i>
+                    <input type="text" placeholder="e.g. Brown vs. Mayden" id="caseStyle" name="caseStyle">
+                    <label for="caseStyle">Case Style</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col s7">
-                    <input type="number" value="0" id="sendDelay3">
-                    <label for="sendDelay3">Send Delay</label>
-                </div>
-                <div class="input-field col s5">
-                    <select id="timeUnit3">
-                        <option value="hrs" selected>Hours</option>
-                        <option value="days">Days</option>
-                    </select>
-                </div>
-            </div>
-            <!-- Email 4 -->
-            <div class="row">
-            <hr class="divider" />
                 <div class="input-field col s12">
-                    <select name="subject4" id="subject4">
-                    <option value="" disabled selected>Select Honeybee Template</option>
-                    <? for (var i = 0; i < subjects.length; i++) { ?>
-                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
-                        <? } ?>
-                    </select>
-                    <label for="subject4">(Optional) 4th Email to Send</label>
+                    <i class="material-icons prefix">date_range</i>
+                    <input type="text" class="datepicker" id="depoDate" name="depoDate">
+                    <label for="depoDate">Date</label>
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col s7">
-                    <input type="number" value="0" id="sendDelay4">
-                    <label for="sendDelay4">Send Delay</label>
+                <div class="input-field col s4">
+                    <input type="number" value="10" id="depoHour">
+                    <label for="depoHour">Hour</label>
                 </div>
-                <div class="input-field col s5">
-                    <select id="timeUnit4">
-                        <option value="hrs" selected>Hours</option>
-                        <option value="days">Days</option>
+                <div class="input-field col s4">
+                    <input type="number" value="30" id="depoMinute">
+                    <label for="depoMinute">Minute</label>
+                </div>
+                <div class="input-field col s4">
+                    <select id="amPm">
+                        <option value="am" selected>AM</option>
+                        <option value="pm">PM</option>
                     </select>
                 </div>
             </div>
-            <!-- Email 5 -->
+            <!-- Attorney Information -->
             <div class="row">
-            <hr class="divider" />
-                <div class="input-field col s12">
-                    <select name="subject5" id="subject5">
-                    <option value="" disabled selected>Select Honeybee Template</option>
-                    <? for (var i = 0; i < subjects.length; i++) { ?>
-                        <option value="<?= i; ?>"><?= subjects[i]; ?></option>
-                        <? } ?>
-                    </select>
-                    <label for="subject5">(Optional) 5th Email to Send</label>
+                <hr class="divider red darken-3">
+                <p class="flow-text">Attorney Information</p>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">business</i>
+                        <input type="text" id="firm" name="firm">
+                        <label for="firm">Firm</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">person</i>
+                        <input type="text" id="attorney" name="attorney">
+                        <label for="attorney">Attorney</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">contact_mail</i>
+                        <input type="email" class="validate" id="attorneyEmail" name="attorneyEmail">
+                        <label for="attorneyEmail">Attorney Email</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">contact_phone</i>
+                        <input type="text" id="attorneyPhone" name="attorneyPhone">
+                        <label for="attorneyPhone">Attorney Phone Number</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">add_location</i>
+                        <input type="text" id="firmAddress1" name="firmAddress1">
+                        <label for="firmAddress1">Firm Address 1</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">add_location</i>
+                        <input type="text" id="firmAddress2" name="firmAddress2">
+                        <label for="firmAddress2">Firm Address 2</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input type="text" value="San Antonio" id="city" name="city">
+                        <label for="city">City</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input type="text" value="TX" id="state" name="state">
+                        <label for="state">State</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <input type="text" placeholder="78232" id="zip" name="zip">
+                        <label for="zip">Zip</label>
+                    </div>
                 </div>
             </div>
+            <!-- Location Information -->
             <div class="row">
-                <div class="input-field col s7">
-                    <input type="number" value="0" id="sendDelay5">
-                    <label for="sendDelay5">Send Delay</label>
+                <hr class="divider red darken-3">
+                <p class="flow-text">Location Information</p>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">business</i>
+                        <input type="text" id="locationFirm" name="locationFirm">
+                        <label for="locationFirm">Location Firm</label>
+                    </div>
                 </div>
-                <div class="input-field col s5">
-                    <select id="timeUnit5">
-                        <option value="hrs" selected>Hours</option>
-                        <option value="days">Days</option>
-                    </select>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">add_location</i>
+                        <input type="text" id="locationAddress1" name="locationAddress1">
+                        <label for="locationAddress1">Location Address 1</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">add_location</i>
+                        <input type="text" id="locationAddress2" name="locationAddress2">
+                        <label for="locationAddress2">Location Address 2</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input type="text" value="San Antonio" id="locationCity" name="locationCity">
+                        <label for="locationCity">City</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input type="text" value="TX" id="locationState" name="locationState">
+                        <label for="locationState">State</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <input type="text" placeholder="78232" id="locationZip" name="locationZip">
+                        <label for="locationZip">Zip</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">phone</i>
+                        <input type="text" id="locationPhone" name="locationPhone">
+                        <label for="locationPhone">Location Phone Number</label>
+                    </div>
                 </div>
             </div>
-            <!-- Auto-stop Enabled? -->
-            <div class="input-field col s12">
-                <select id="autoStop"> <!-- autostop save value appends to automation value -->
-                    <option value="off" selected>Autostop Off</option>
-                    <option value="on">Autostop On</option>
-                </select>
-                <label for="autoStop">Add Autostop?</label>
-            </div>
-            <div class="col s12">
-                <blockquote>
-                    <span>If autostop is on, automation cancels if you receive an email from this address after deploying.</span>
-                </blockquote>
+            <!-- Services -->
+            <div class="row">
+                <hr class="divider red darken3">
+                <p class="flow-text">Services Included</p>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">burst_mode</i>
+                        <input type="text" id="services" name="services">
+                        <label for="services">Service Description</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">format_align_justify</i>
+                        <input type="text" id="courtReporter" name="courtReporter">
+                        <label for="courtReporter">Court Reporter</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s9">
+                        <i class="material-icons prefix">videocam</i>
+                        <input type="text" id="videographer" name="videographer">
+                        <label for="videographer">Videographer</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <label>
+                            <input type="checkbox" id="pip" />
+                            <span>PIP</span>
+                        </label>
+                    </div>
+                </div>
             </div>
             <!-- Buttons -->
             <div class="row">
-            <p><br></p>
-                <div class="col s12">
-                    <button class="btn" type="submit">Save This Automation</button>
+                <div class="col s12 center">
+                    <button class="btn" type="submit">Save Deposition</button>
                 </div>
             </div>
         </div> <!-- Container-->
     </form>
+    <script>
+        // initialize datepicker
+        $(document).ready(function () {
+            $('.datepicker').datepicker();
+        });
+    </script>
 </body>
-
 </html>

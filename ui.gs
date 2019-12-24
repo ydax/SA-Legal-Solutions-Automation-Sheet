@@ -14,7 +14,7 @@ function onOpen (e) {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu("SA Legal Services")
   .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
-              .addItem("🔁 Repeat Orderer", "showRepeatOrdererSidebar")
+              .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
               .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
   .addToUi();
 }
@@ -22,10 +22,26 @@ function onOpen (e) {
 // create the new orderer deposition sidebar
 function showNewOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('newOrderer');
-  var html = template.evaluate().setTitle('New Deposition from a New Orderer');
+  var html = template.evaluate().setTitle('🆕 New Deposition from a New Orderer');
   SpreadsheetApp.getUi().showSidebar(html);
 };
 
+// initiate the repeat orderer modal
+function initiateRepeatOrdererModal() {
+  var html = HtmlService.createHtmlOutputFromFile('repeatOrdererM')
+    .setWidth(350)
+    .setHeight(105);
+  SpreadsheetApp.getUi() 
+    .showModalDialog(html, '👥 Getting previous orderers...');
+};
+
+// create the repeat orderer sidebar
+function launchRepeatOrdererSidebar() {
+  var template = HtmlService.createTemplateFromFile('repeatOrderer');
+  template.orderers = getPreviousOrderers();
+  var html = template.evaluate().setTitle('🔁 New Deposition from a Repeat Orderer');
+  SpreadsheetApp.getUi().showSidebar(html);
+};
 
 /** 
 REQUIREMENTS

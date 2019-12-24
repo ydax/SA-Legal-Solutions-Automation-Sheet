@@ -65,5 +65,5 @@ function getPreviousOrderers () {
   return element != '';
   };
   
-  Logger.log(sortedUniqueArray);
+  return sortedUniqueArray;
 };
