@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">d
 
     <!-- Interact with Google Sheet -->
     <script>
@@ -34,7 +34,9 @@
                 $('#witnessName').val(), 
                 $('#caseStyle').val(), 
                 $('#depoDate').val(), 
-                $('#depoTime').val(), 
+                $('#depoHour').val(), 
+                $('#depoMinute').val(), 
+                $('#amPm').val(), 
                 $('#firm').val(), 
                 $('#attorney').val(), 
                 $('#attorneyEmail').val(), 
@@ -98,15 +100,26 @@
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col s6">
+                <div class="input-field col s12">
                     <i class="material-icons prefix">date_range</i>
                     <input type="text" class="datepicker" id="depoDate" name="depoDate">
                     <label for="depoDate">Date</label>
                 </div>
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">access_time</i>
-                    <input type="text" class="timepicker" id="depoTime" name="depoTime">
-                    <label for="depoTime">Time</label>
+            </div>
+            <div class="row">
+                <div class="input-field col s4">
+                    <input type="number" value="10" id="depoHour">
+                    <label for="depoHour">Hour</label>
+                </div>
+                <div class="input-field col s4">
+                    <input type="number" value="30" id="depoMinute">
+                    <label for="depoMinute">Minute</label>
+                </div>
+                <div class="input-field col s4">
+                    <select id="amPm">
+                        <option value="am" selected>AM</option>
+                        <option value="pm">PM</option>
+                    </select>
                 </div>
             </div>
             <!-- Attorney Information -->
@@ -262,11 +275,6 @@
         $(document).ready(function () {
             $('.datepicker').datepicker();
         });
-
-        // initialize timepicker
-        $(document).ready(function () {
-                $('.timepicker').timepicker();
-            });
     </script>
 </body>
 

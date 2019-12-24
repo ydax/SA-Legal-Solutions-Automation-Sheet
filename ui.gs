@@ -13,7 +13,9 @@
 function onOpen (e) {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu("SA Legal Services")
-  .addItem("📝 New Deposition", "showNewOrdererSidebar")
+  .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
+              .addItem("🔁 Repeat Orderer", "showRepeatOrdererSidebar")
+              .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
   .addToUi();
 }
 
