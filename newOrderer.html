@@ -28,7 +28,7 @@
                 });
                 $("button").removeAttr("disabled");
             })
-                .getDepositionData(
+                .getNewDepositionData(
                 $('#orderedBy').val(), 
                 $('#orderedByEmail').val(), 
                 $('#witnessName').val(), 
@@ -70,7 +70,7 @@
             </div>
             <!-- Order Information -->
             <div class="row">
-                <p class="flow-text">Orderer Information</p>
+                <p class="flow-text grey-text">Orderer Information</p>
                 <div class="input-field col s12">
                     <i class="material-icons prefix">person</i>
                     <input type="text" id="orderedBy" name="orderedBy">
@@ -84,7 +84,7 @@
             </div>
             <!-- Deposition Details -->
             <hr class="divider red darken-3">
-            <p class="flow-text">Deposition Details</p>
+            <p class="flow-text grey-text">Deposition Details</p>
             <div class="row">
                 <div class="input-field col s12">
                     <i class="material-icons prefix">person_outline</i>
@@ -102,30 +102,30 @@
             <div class="row">
                 <div class="input-field col s12">
                     <i class="material-icons prefix">date_range</i>
-                    <input type="text" class="datepicker" id="depoDate" name="depoDate">
+                    <input type="date" id="depoDate" name="depoDate">
                     <label for="depoDate">Date</label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s4">
-                    <input type="number" value="10" id="depoHour">
+                    <input type="number" value="10" id="depoHour" max="12">
                     <label for="depoHour">Hour</label>
                 </div>
                 <div class="input-field col s4">
-                    <input type="number" value="30" id="depoMinute">
+                    <input type="number" value="30" id="depoMinute" max="59">
                     <label for="depoMinute">Minute</label>
                 </div>
                 <div class="input-field col s4">
                     <select id="amPm">
-                        <option value="am" selected>AM</option>
-                        <option value="pm">PM</option>
+                        <option value="AM" selected>AM</option>
+                        <option value="PM">PM</option>
                     </select>
                 </div>
             </div>
             <!-- Attorney Information -->
             <div class="row">
                 <hr class="divider red darken-3">
-                <p class="flow-text">Attorney Information</p>
+                <p class="flow-text grey-text">Attorney Information</p>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">business</i>
@@ -186,7 +186,7 @@
             <!-- Location Information -->
             <div class="row">
                 <hr class="divider red darken-3">
-                <p class="flow-text">Location Information</p>
+                <p class="flow-text grey-text">Location Information</p>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">business</i>
@@ -233,7 +233,7 @@
             <!-- Services -->
             <div class="row">
                 <hr class="divider red darken3">
-                <p class="flow-text">Services Included</p>
+                <p class="flow-text grey-text">Services Included</p>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">burst_mode</i>
@@ -268,14 +268,8 @@
                     <button class="btn" type="submit">Save Deposition</button>
                 </div>
             </div>
-        </div> <!-- Container-->
+        </div>
     </form>
-    <script>
-        // initialize datepicker
-        $(document).ready(function () {
-            $('.datepicker').datepicker();
-        });
-    </script>
 </body>
 
 </html>
