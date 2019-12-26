@@ -40,15 +40,16 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
 function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip) {
   SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
   var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
-  var newScheduledDepo = [previousOrderer, witnessName, caseStyle, depoTime];
+  var newScheduledDepo = ['Scheduled', depoDate, witnessName, previousOrderer, caseStyle, depoTime];
   
   /** Gets firm and attorney information from previous orderer, pushes it into the newScheduledDepo array */
   var infoFromPreviousOrderer = firmInformationFromOrderer(previousOrderer);
   for (var i = 0; i < infoFromPreviousOrderer.length; i++) {
     newScheduledDepo.push(infoFromPreviousOrderer[i]);
   }
-  SpreadsheetApp.getActiveSpreadsheet().toast('✔️ Found attorney and firm info');
+  SpreadsheetApp.getActiveSpreadsheet().toast('📙️ Found attorney and firm info');
 
+  newScheduledDepo.push(locationFirm); 
   newScheduledDepo.push(locationAddress1); 
   newScheduledDepo.push(locationAddress2); 
   newScheduledDepo.push(locationCity); 
@@ -60,7 +61,13 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   newScheduledDepo.push(videographer); 
   newScheduledDepo.push(pip); 
   
+  // Formats the array for Google Sheets setValue() method
+  var formattedArray = [newScheduledDepo];
+  Logger.log(newScheduledDepo.length);
   Logger.log(newScheduledDepo);
+  
+  printNewDeposition(formattedArray);
+  SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +89,13 @@ function getPreviousOrderers () {
     firstLevelArray.push(element[0]);
   });
   
+  /** Removes all elements that are empty strings from an array
+  */
+  function isntEmpty (element) {
+  return element != '';
+  };
+  
+  // Filter out empty strings, remove duplicate elements, and sort the array
   var firstLevelEmptiesRemoved = firstLevelArray.filter(isntEmpty);
   
   var uniqueArray = firstLevelEmptiesRemoved.filter(function(elem, index, self) {
@@ -89,11 +103,6 @@ function getPreviousOrderers () {
   });
   
   var sortedUniqueArray = uniqueArray.sort();
-  
-  // Array cleaning functions
-  function isntEmpty (element) {
-  return element != '';
-  };
   
   return sortedUniqueArray;
 };
@@ -105,10 +114,9 @@ function printNewDeposition (array) {
   var ss = SpreadsheetApp.getActive();
   var scheduleSheet = ss.getSheetByName('Schedule a depo');
   
-  // Create an empty row for the new deposition at the top of the sheet, shift others down by 1
+  // Create an empty row for the new deposition at the top of the sheet, shift others down by 1, print to the new row
   scheduleSheet.insertRowBefore(2);
-  
-  
+  scheduleSheet.getRange(2, 1, 1, 26).setValues(array);
 };
 
 /** Takes the most recently-scheduled depo by an orderer and returns an array with the lawyer and firm information.
