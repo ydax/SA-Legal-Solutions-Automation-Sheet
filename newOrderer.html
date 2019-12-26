@@ -21,11 +21,7 @@
         function getDepoData(e) {
             e.preventDefault();
             $("button").attr("disabled", "disabled");
-            M.toast({html: 'Here\'s a toast.'});
-            google.script.run.withSuccessHandler(function (text) {
-                M.toast({
-                    html: text
-                });
+            google.script.run.withSuccessHandler(function () {
                 $("button").removeAttr("disabled");
             })
                 .getNewDepositionData(

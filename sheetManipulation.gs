@@ -3,34 +3,30 @@
 * @return Sequential array of values.
 */
 function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, attorneyEmail, attorneyPhone, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip) {
-  Logger.log(orderedBy); 
-  Logger.log(orderedByEmail); 
-  Logger.log(witnessName); 
-  Logger.log(caseStyle); 
-  Logger.log(depoDate); 
-  Logger.log(depoHour);
-  Logger.log(depoMinute);
-  Logger.log(amPm);
-  Logger.log(firm); 
-  Logger.log(attorney); 
-  Logger.log(attorneyEmail); 
-  Logger.log(attorneyPhone); 
-  Logger.log(firmAddress1); 
-  Logger.log(firmAddress2); 
-  Logger.log(city); 
-  Logger.log(state); 
-  Logger.log(zip); 
-  Logger.log(locationAddress1); 
-  Logger.log(locationAddress2); 
-  Logger.log(locationCity); 
-  Logger.log(locationState); 
-  Logger.log(locationZip); 
-  Logger.log(locationPhone); 
-  Logger.log(services); 
-  Logger.log(courtReporter); 
-  Logger.log(videographer); 
-  Logger.log(pip); 
-  return 'Success';
+  // Updates progress to user through the sidebar UI
+  SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
+  
+  // Concatenates deposition time-related variables for print formatting
+  var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
+  
+  // Converts PIP boolean value into "yes" or "no" string
+  if (pip === true) {
+    pip = 'Yes';
+  } else {
+    pip = 'No';
+  };
+  
+  // Begins construction of deposition information array
+  var newScheduledDepo = ['Scheduled', depoDate, witnessName, orderedBy, caseStyle, depoTime, firm, attorney, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, attorneyEmail, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip];
+  Logger.log(newScheduledDepo.length); 
+  Logger.log(newScheduledDepo); 
+  
+  // Formats the array for Google Sheets setValue() method, calls printing function
+  var formattedArray = [newScheduledDepo];
+  printNewDeposition(formattedArray);
+  
+  // Updates progress to user through the sidebar UI
+  SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
 };
 
 /** Collects data from repeat orderer deposition sidebar
@@ -38,16 +34,30 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
 * @return Sequential array of values.
 */
 function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip) {
+  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
+  
+  // Concatenates deposition time-related variables for print formatting
   var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
+  
+  // Begins construction of deposition information array
   var newScheduledDepo = ['Scheduled', depoDate, witnessName, previousOrderer, caseStyle, depoTime];
   
-  /** Gets firm and attorney information from previous orderer, pushes it into the newScheduledDepo array */
+  // Gets firm and attorney information from previous orderer, pushes it into the newScheduledDepo array
   var infoFromPreviousOrderer = firmInformationFromOrderer(previousOrderer);
   for (var i = 0; i < infoFromPreviousOrderer.length; i++) {
     newScheduledDepo.push(infoFromPreviousOrderer[i]);
   }
+  
+  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('📙️ Found attorney and firm info');
+  
+  // Convert PIP boolean value into "yes" or "no" string
+  if (pip === true) {
+    pip = 'Yes';
+  } else {
+    pip = 'No';
+  };
 
   newScheduledDepo.push(locationFirm); 
   newScheduledDepo.push(locationAddress1); 
@@ -61,12 +71,11 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   newScheduledDepo.push(videographer); 
   newScheduledDepo.push(pip); 
   
-  // Formats the array for Google Sheets setValue() method
+  // Formats the array for Google Sheets setValue() method, calls printing function
   var formattedArray = [newScheduledDepo];
-  Logger.log(newScheduledDepo.length);
-  Logger.log(newScheduledDepo);
-  
   printNewDeposition(formattedArray);
+  
+  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
 };
 
