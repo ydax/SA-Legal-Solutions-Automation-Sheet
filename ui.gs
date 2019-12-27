@@ -12,10 +12,13 @@
 
 function onOpen (e) {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu("SA Legal Services")
+  ui.createMenu("⚖️ SA Legal Services")
   .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
-              .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
-              .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
+     .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
+     .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
+  .addSubMenu(SpreadsheetApp.getUi().createMenu("🔎 Search")
+     .addItem("📅 By Date", "searchByDate")
+     .addItem("👤 By Witness", "searchByWitness"))
   .addToUi();
 }
 
@@ -73,7 +76,7 @@ NOTES
 - Services (column V) will be manual, so will column W
 - Search page on the front
    - Searching
-       - By Date: Name, Ordered By, Firm
+       - By Date: Witness, Ordered By, Firm
        - By Witness: Date, Ordered By, Firm
 - Enable any changes made in the sheet to reflect in the calendar, too (I think this needs to be an onChange trigger)
 - Blake Email (once per week)
