@@ -17,10 +17,8 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   };
   
   // Begins construction of deposition information array
-  var newScheduledDepo = ['Scheduled', depoDate, witnessName, orderedBy, caseStyle, depoTime, firm, attorney, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, attorneyEmail, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip];
-  Logger.log(newScheduledDepo.length); 
-  Logger.log(newScheduledDepo); 
-  
+  var newScheduledDepo = ['Scheduled', depoDate, witnessName, orderedBy, orderedByEmail, caseStyle, depoTime, firm, attorney, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, attorneyEmail, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip];
+
   // Formats the array for Google Sheets setValue() method, calls printing function
   var formattedArray = [newScheduledDepo];
   printNewDeposition(formattedArray);
@@ -40,14 +38,22 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   // Concatenates deposition time-related variables for print formatting
   var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
   
+  // Gets email address from previous orderer, exits the process if not included on the "Schedule a depo" Sheet
+  var ordererEmail = emailFromOrderer(previousOrderer);
+  if (ordererEmail == '') {
+    SpreadsheetApp.getActiveSpreadsheet().toast('⚠️️ Error: orderer email address is not included in column E of "Schedule a depo" sheet. Please add it.');
+    return;
+  };
+  
   // Begins construction of deposition information array
-  var newScheduledDepo = ['Scheduled', depoDate, witnessName, previousOrderer, caseStyle, depoTime];
+  var newScheduledDepo = ['Scheduled', depoDate, witnessName, previousOrderer, ordererEmail, caseStyle, depoTime];
   
   // Gets firm and attorney information from previous orderer, pushes it into the newScheduledDepo array
   var infoFromPreviousOrderer = firmInformationFromOrderer(previousOrderer);
+  Logger.log(infoFromPreviousOrderer);
   for (var i = 0; i < infoFromPreviousOrderer.length; i++) {
     newScheduledDepo.push(infoFromPreviousOrderer[i]);
-  }
+  };
   
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('📙️ Found attorney and firm info');
@@ -116,7 +122,7 @@ function getPreviousOrderers () {
   return sortedUniqueArray;
 };
 
-/** Prints an array to the final row of the "Schedule a depo" sheet -- TODO
+/** Prints an array to the final row of the "Schedule a depo" sheet
 @param {array} 1d array ordered to align with the columns in "Schedule a depo."
 */
 function printNewDeposition (array) {
@@ -125,7 +131,7 @@ function printNewDeposition (array) {
   
   // Create an empty row for the new deposition at the top of the sheet, shift others down by 1, print to the new row
   scheduleSheet.insertRowBefore(2);
-  scheduleSheet.getRange(2, 1, 1, 26).setValues(array);
+  scheduleSheet.getRange(2, 1, 1, 27).setValues(array);
 };
 
 /** Takes the most recently-scheduled depo by an orderer and returns an array with the lawyer and firm information.
@@ -140,8 +146,7 @@ function firmInformationFromOrderer (orderer) {
   var attyAndFirmInformation = [];
   for (var i = 0; i < allScheduledRows.length; i++) {
     if (allScheduledRows[i][3] === orderer) {
-      // allScheduledRows[i][n] because columns 6 - 14 contain the desired information on the "Schedule a depo" sheet
-      attyAndFirmInformation.push(allScheduledRows[i][6]);
+      // allScheduledRows[i][n] because columns 7 - 15 contain the desired information on the "Schedule a depo" sheet
       attyAndFirmInformation.push(allScheduledRows[i][7]);
       attyAndFirmInformation.push(allScheduledRows[i][8]);
       attyAndFirmInformation.push(allScheduledRows[i][9]);
@@ -150,6 +155,7 @@ function firmInformationFromOrderer (orderer) {
       attyAndFirmInformation.push(allScheduledRows[i][12]);
       attyAndFirmInformation.push(allScheduledRows[i][13]);
       attyAndFirmInformation.push(allScheduledRows[i][14]);
+      attyAndFirmInformation.push(allScheduledRows[i][15]);
       break;
     };
   };
@@ -157,7 +163,26 @@ function firmInformationFromOrderer (orderer) {
 };
 
 
-
+/** Gets the email address of a previous orderer from the most recently-scheduled depo from them
+@param {orderer} string The previous orderer's name as selected from the New Deposition from a Previous Orderer sidebar dropdown menu.
+*/
+function emailFromOrderer (orderer) {
+  var ss = SpreadsheetApp.getActive();
+  var scheduleSheet = ss.getSheetByName('Schedule a depo');
+  
+  // Gets an array of row arrays that match orderer name
+  var allScheduledRows = scheduleSheet.getRange(2, 1, scheduleSheet.getLastRow(), scheduleSheet.getLastColumn()).getValues();
+  var ordererEmail = '';
+  for (var i = 0; i < allScheduledRows.length; i++) {
+    if (allScheduledRows[i][3] === orderer) {
+      // allScheduledRows[i][n] because columns 7 - 15 contain the desired information on the "Schedule a depo" sheet
+      ordererEmail = allScheduledRows[i][4];
+      break;
+    };
+  };
+  
+  return ordererEmail;
+};
 
 
 

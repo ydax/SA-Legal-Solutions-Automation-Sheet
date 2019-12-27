@@ -54,8 +54,8 @@ REQUIREMENTS
 WORKFLOW
 X 1. Modify Sheet Structure: Add Query Sheet w/ results section, modify Confirmation of Scheduling to have a status (done w/ data validation)
 X 2. Add in dev logging functions via properties
-3. Add new deposition creation methods, verify they work (incl. population of templates)
-3.1 Modify Sheet, sidebar template, and back-end functions to include orderer email address
+X 3. Add new deposition creation methods, verify they work (incl. population of templates)
+X 3.1 Modify Sheet, sidebar template, and back-end functions to include orderer email address
 4. Add querying features
 5. Add in automatically-generated email feature for new depos
 6. Add in automatic calendar population for new depos (incl. tag)
