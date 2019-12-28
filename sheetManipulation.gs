@@ -25,6 +25,12 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
+  
+  // Sends a confirmation email to orderer
+  sendConfirmationToOrderer(orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  
+  // Updates progress to user through the sidebar UI
+  SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
 };
 
 /** Collects data from repeat orderer deposition sidebar
@@ -83,6 +89,12 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
+  
+  // Sends a confirmation email to orderer
+  sendConfirmationToOrderer(ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  
+  // Updates progress to user through the sidebar UI
+  SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
