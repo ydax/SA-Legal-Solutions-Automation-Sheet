@@ -6,6 +6,12 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
   
+  // Checks for orderedByEmail, if blank, exits script and alerts user
+  if (orderedByEmail == '') {
+    SpreadsheetApp.getActiveSpreadsheet().toast('⚠️️ Error: orderer email address was not included. Please add it.');
+    return;
+  };
+  
   // Concatenates deposition time-related variables for print formatting
   var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
   
