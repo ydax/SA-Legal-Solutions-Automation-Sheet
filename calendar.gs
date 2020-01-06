@@ -69,6 +69,7 @@ function manuallyUpdateCalendar(e) {
         // Constructs the new time (date obj).
         var newTime = new Date(dateFromHour(newValue, editRow));
         
+        // Tries to update Services calendar, alerts user with result.
         try {
           // Deletes old event and adds a new one at the correct time.
           var title = SACal.getEventById(eventId).getTitle();
@@ -82,6 +83,7 @@ function manuallyUpdateCalendar(e) {
           ss.toast('✅ Services Calendar Updated Successfully');
         } catch (error) {
           SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition time you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
+          addToDevLog('In event time onEdit function: ' + error);
         };
       };
       
@@ -89,10 +91,32 @@ function manuallyUpdateCalendar(e) {
     
     // Routing if it was made to event date. 2 because Date is in Column B.
     else if (editColumn === 2) {
-      Logger.log('Date');
+      // Gets raw information used in date modification.
+      var newValue = e.value;
+      var newUnformattedDate = floatToCSTDate(newValue);
+      var eventId = depoSheet.getRange(editRow, 37).getValue();
+      
+      var newTime = new Date(dateFromDate(newUnformattedDate, editRow));
+      Logger.log(newTime);
+        
+      // Tries to update Services calendar, alerts user with result.
+      try {
+        // Deletes old event and adds a new one at the correct time.
+        var title = SACal.getEventById(eventId).getTitle();
+        var description = SACal.getEventById(eventId).getDescription();
+        var location = SACal.getEventById(eventId).getLocation();
+        SACal.getEventById(eventId).deleteEvent();
+        var event = SACal.createEvent(title, newTime, newTime,{ description: description, location: location });
+        
+        // Add new eventId to the Schedule a depo Sheet.
+        depoSheet.getRange(editRow, 37).setValue(event.getId());
+        ss.toast('✅ Services Calendar Updated Successfully');
+      } catch (error) {
+        SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition date you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
+        addToDevLog('In event date onEdit function: ' + error);
+      };
     };
   };
-  
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -171,13 +195,13 @@ function toStringDate (depoDate) {
   return month + ' ' + day + ', ' + year;
 };
 
-/** Converts value from float number to CST date format (currently unused).
+/** Converts value from float number to UTC date format.
 @param {floatValue} number The integer created when Google Sheets returns the value of a cell with a date or time in it.
 See more: https://stackoverflow.com/questions/38815858/google-apps-script-convert-float-to-date
 */
 function floatToCSTDate (floatValue) {
-  // Converts float value into date CST date (hence -6)
-  var rawValue = new Date(Date.UTC(1899, 11, 30, -6, 0, floatValue * 86400)).toString();
+  // Converts float value into UTC date (+6 in the 4th argument because Google defaults this Script to CST, and we need GMT for the correct result).
+  var rawValue = new Date(Date.UTC(1899, 11, 30, 6, 0, floatValue * 86400)).toString();
   
   return rawValue;
 };
@@ -194,6 +218,31 @@ function dateFromHour(hour, editRow) {
   // Needed Format: 1995-12-17T03:24:00
   var formattedHour = amPmTo24(hour);
   var unformattedDate = depoSheet.getRange(editRow, 2).getValue().toString();
+  
+  // Destructures and formats date. Incoming format: Mon Jan 06 2020 00:00:00 GMT-0600 (CST)
+  var unformattedMonth = unformattedDate.substring(4, 7);
+  var formattedMonth = monthToMm(unformattedMonth);
+  var day = unformattedDate.substring(8, 10);
+  var year = unformattedDate.substring(11, 15);
+  
+  // Creates date in Needed Format.
+  var formattedDate = year + '-' + formattedMonth + '-' + day + 'T' + formattedHour + ':00';
+  
+  return formattedDate;
+};
+
+/** Generates date obj from date and onEdit(e) info 
+@param {date} string Stringified date object.
+@param {editRow} number The row a user has just edited.
+@return {date} object A date object reprsenting the new deposition time.
+*/
+function dateFromDate (unformattedDate, editRow) {
+  var ss = SpreadsheetApp.getActive();
+  var depoSheet = ss.getSheetByName('Schedule a depo');
+
+  // Gets hour info and converts it to 24 hour format.
+  var hour = depoSheet.getRange(editRow, 7).getValue();
+  var formattedHour = amPmTo24(hour);
   
   // Destructures and formats date. Incoming format: Mon Jan 06 2020 00:00:00 GMT-0600 (CST)
   var unformattedMonth = unformattedDate.substring(4, 7);
@@ -274,7 +323,7 @@ function addIds() {
   /** Iterate all rows in Schedule a depo Sheet, search for title matches, and add eventIds.
   Note: change starting value of i to start iteration at a different row.
   */
-  for (var i = 1067; i < 1080; i++) {
+  for (var i = 2; i < 3; i++) {
     var eventTitle = createTitleString(i);
     events.forEach(function(event) {
       if (event.getTitle() == eventTitle) {
