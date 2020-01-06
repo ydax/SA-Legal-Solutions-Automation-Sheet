@@ -4,6 +4,7 @@ Automations built behind SA Legal's Google Sheet automation hub. Contract starte
 ## SA Legal Automation Station Usage Tips
 - New depositions should be added via the sidebars that can be activated by making a selection in the ⚖️ SA Legal Services menu, not by adding information directly to the "Schedule a depo" Sheet. 
 - **Nobody** should edit the layout of the "Schedule a depo" Sheet. Many of the automations depend on the layout of this Sheet remaining the way it is.
+- **Do not modify data formats within the Automation Station.** For example, do not change the format of Column G in the "Schedule a depo" Sheet from "Plain Text" to something else. In many cases, the Application expects data in the a particular format.
 - If someone is using the Automation Station to add or modify depositions (or the Google Calendar events associated with them), the email address they're logged in with will need to have full access ("Make changes and manage sharing") to Blake's Services Google Calendar.
 
 ### Layout Changes to SA Legal Automation Station v2
