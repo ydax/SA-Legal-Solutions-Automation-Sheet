@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////////
+///////// AUTOMATED MANIPULATION OF DEPOSITION DATA WITHIN THE SPREADSHEET /////////
+////////////////////////////////////////////////////////////////////////////////////
+
 /** Collects data from new orderer deposition sidebar
 * @params {multiple} strings, bool Values from the form deployed through Google Sheet.
 * @return Sequential array of values.
@@ -31,6 +35,12 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
+  
+  // Adds the deposition to the Services calendar
+  var event = addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  
+  // Updates progress to user through the sidebar UI
+  SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // Sends a confirmation email to orderer
   sendConfirmationToOrderer(orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
@@ -95,6 +105,12 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
+  
+  // Adds the deposition to the Services calendar
+  addEvent(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  
+  // Updates progress to user through the sidebar UI
+  SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // Sends a confirmation email to orderer
   sendConfirmationToOrderer(ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
