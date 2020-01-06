@@ -29,6 +29,7 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
     });
   
   // Add eventId to the Schedule a depo Sheet.
+  depoSheet.getRange(2, 37).setValue(event.getId());
 };
 
 /** Checks for manual edits to deposition times / dates, updates the calendar event if necessary
@@ -50,13 +51,40 @@ function manuallyUpdateCalendar(e) {
     
     // Routing the edit if it was made to the event time. 7 because Start Time is in Column G.
     if (editColumn === 7) {
-      var oldValue = floatToCSTDate(e.oldValue);
-      var newValue = floatToCSTDate(e.value);
-      var oldTime = oldValue.substring(16, 25);
-      var newTime = newValue.substring(16, 25);
+      // Get information used in date modification
+      var oldValue = e.oldValue;
+      var newValue = e.value;
       var eventId = depoSheet.getRange(editRow, 37).getValue();
-      var event = SACal.getEventById(eventId).getTitle();
-      Logger.log(event);
+      
+      // See if the newly-added time is in HH:MM AM format. If not, reject the change.
+      var lastThreeCharacters = newValue.slice(-3);
+      var validationCheck = false;
+      if (lastThreeCharacters === ' PM' || lastThreeCharacters === ' AM') {
+        validationCheck = true;
+      };
+      if (validationCheck !== true) {
+        SpreadsheetApp.getUi().alert('⚠️ Incorrect Format. Please add the new time in Hour:Minute AM/PM format. Note that AM or PM must be capitalized. Your edit to row ' + editRow + ', column ' + editColumn + ' was not saved.')
+        depoSheet.getRange(editRow, editColumn).setValue(oldValue);
+      } else {
+        // Constructs the new time (date obj).
+        var newTime = new Date(dateFromHour(newValue, editRow));
+        
+        try {
+          // Deletes old event and adds a new one at the correct time.
+          var title = SACal.getEventById(eventId).getTitle();
+          var description = SACal.getEventById(eventId).getDescription();
+          var location = SACal.getEventById(eventId).getLocation();
+          SACal.getEventById(eventId).deleteEvent();
+          var event = SACal.createEvent(title, newTime, newTime,{ description: description, location: location });
+          
+          // Add new eventId to the Schedule a depo Sheet.
+          depoSheet.getRange(editRow, 37).setValue(event.getId());
+          ss.toast('✅ Services Calendar Updated Successfully');
+        } catch (error) {
+          SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition time you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
+        };
+      };
+      
     }
     
     // Routing if it was made to event date. 2 because Date is in Column B.
@@ -143,7 +171,7 @@ function toStringDate (depoDate) {
   return month + ' ' + day + ', ' + year;
 };
 
-/** Converts value from float number to CST date format
+/** Converts value from float number to CST date format (currently unused).
 @param {floatValue} number The integer created when Google Sheets returns the value of a cell with a date or time in it.
 See more: https://stackoverflow.com/questions/38815858/google-apps-script-convert-float-to-date
 */
@@ -152,6 +180,73 @@ function floatToCSTDate (floatValue) {
   var rawValue = new Date(Date.UTC(1899, 11, 30, -6, 0, floatValue * 86400)).toString();
   
   return rawValue;
+};
+
+/** Generates date obj from hour and onEdit(e) info 
+@param {hour} string Hour data formatted HH:MM AM.
+@param {editRow} number The row a user has just edited.
+@return {date} object A date object reprsenting the new deposition time.
+*/
+function dateFromHour(hour, editRow) {
+  var ss = SpreadsheetApp.getActive();
+  var depoSheet = ss.getSheetByName('Schedule a depo');
+  
+  // Needed Format: 1995-12-17T03:24:00
+  var formattedHour = amPmTo24(hour);
+  var unformattedDate = depoSheet.getRange(editRow, 2).getValue().toString();
+  
+  // Destructures and formats date. Incoming format: Mon Jan 06 2020 00:00:00 GMT-0600 (CST)
+  var unformattedMonth = unformattedDate.substring(4, 7);
+  var formattedMonth = monthToMm(unformattedMonth);
+  var day = unformattedDate.substring(8, 10);
+  var year = unformattedDate.substring(11, 15);
+  
+  // Creates date in Needed Format.
+  var formattedDate = year + '-' + formattedMonth + '-' + day + 'T' + formattedHour + ':00';
+  
+  return formattedDate;
+};
+
+/** Converts Hour:Minute AM/PM into 24-hour format 
+@param {originalFormat} string Time represented in Hour:Minute AM/PM (e.g. 2:30 PM).
+@return {newFormat} string Time represented in 24 hour format (14:30).
+*/
+function amPmTo24 (originalFormat) {
+  
+  // Identify the length of the string to determine parsing details.
+  var stringLength = originalFormat.length;
+  
+  // Parse elements of the Hour:Minute AM/PM format.
+  switch (stringLength) {
+    case 8:
+      var hour = parseInt(originalFormat.substring(0, 2));
+      var minute = originalFormat.substring(3, 5);
+      var amPm = originalFormat.slice(-2);
+      break;
+    case 7:
+      var hour = parseInt(originalFormat.substring(0, 1));
+      var minute = originalFormat.substring(2, 4);
+      var amPm = originalFormat.slice(-2);
+      break;
+    default:
+      Logger.log('There are no more acceptible lengths');
+  };
+  
+  // Adds 12 hours only for PM times.
+  if (amPm === 'PM') {
+    hour += 12;
+  };
+  
+  // Adds a zero for integers 1-9.
+  hour = hour.toString();
+  if (hour.length < 2) {
+    hour = '0' + hour;
+  }
+  
+  // Constructs 24-hour format.
+  var newFormat = hour + ':' + minute;
+
+  return newFormat;
 };
 
 /** Gives developer visibility into accessible Google Calendars */
@@ -179,7 +274,7 @@ function addIds() {
   /** Iterate all rows in Schedule a depo Sheet, search for title matches, and add eventIds.
   Note: change starting value of i to start iteration at a different row.
   */
-  for (var i = 932; i < 1080; i++) {
+  for (var i = 1067; i < 1080; i++) {
     var eventTitle = createTitleString(i);
     events.forEach(function(event) {
       if (event.getTitle() == eventTitle) {
