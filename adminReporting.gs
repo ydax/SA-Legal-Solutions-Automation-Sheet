@@ -51,6 +51,27 @@ function addOrderToLog(orderer, firm) {
   }; 
 };
 
+/** Cycles through Script Properties data, structures an email for Blake, sends it, and clears the datastore. */
+function sendOrderActivityReport() {
+  var props = PropertiesService.getScriptProperties();
+  var keys = props.getKeys();
+  var reportText = 'Here\'s the ordering activity for this week:\n\nCount   Orderer\n';
+  
+  if (keys.length != 0) {
+    // Structure email with top orderers first. 50 because the App assumes nobody is going to order more than 50x in a week.
+    for (var i = 50; i > 0; i--) {
+      keys.forEach(function(key) {
+        if(parseOrdererCount(key) == i) {
+          reportText += i + '           ' + parseOrdererInfo(key) + '\n';
+        };
+      });  
+    };
+  };
+  
+  var date = toStringDate(new Date().toISOString());
+  
+  GmailApp.sendEmail('davis@eazl.co', 'Order Activity Report for Week Prior to ' + date, reportText);
+};
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////// RECORDING ANY APPLICATION ERRORS FOR DEVELOPER //////////////////
