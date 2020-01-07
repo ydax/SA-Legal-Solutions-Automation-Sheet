@@ -9,37 +9,44 @@
 function addOrderToLog(orderer, firm) {
   var scriptProps = PropertiesService.getScriptProperties();
   var keys = scriptProps.getKeys();
+  var alreadyExists = false;
+  var key = '';
   
   // Structures the orderer / firm information so that the App can see if there are already orderes from this during this reporting period.
   var ordererInfoFromApp = orderer + ' (' + firm + ')';
   
-  // If keys.length != 0, look for previous orders and take action.
-  if (keys.length != 0) {
+  // If keys.length > 0, look for previous orders and take action.
+  if (keys.length > 0) {
   
     // Cycle through values, see if there's already an instance of this orderer + firm.
     for (var i = 0; i < keys.length ; i++) {
       var ordererInfoFromProps = parseOrdererInfo(keys[i]);
       // If there's already an instance, increase the count in props and store it
       if (ordererInfoFromApp === ordererInfoFromProps) {
-        var count = parseOrdererCount(keys[i]);
-        count ++;
-        var newValue = '#O#' + orderer + '#F#' + firm + '#C#' + count;
-        scriptProps.setProperty(keys[i], newValue);
-        return;
-        
-        // If no existing instance, create a new record
-      } else {
-        // Create order key string using #O# as the pattern for the first three characters concatenated with the now ISO string.
-        var now = new Date().toISOString();
-        var key = '#K#' + now;
-        
-        // Create value string using #O#ordererName#F#firmName#C#count pattern and store it.
-        var value = '#O#' + orderer + '#F#' + firm + '#C#' + 1;
-        scriptProps.setProperty(key, value);
+        alreadyExists = true;
+        key = keys[i];
       };
     };
-    
-  // If keys.length = 0, record the first order instance for this reporting period.
+
+    // If previous orders exist, add one to the count and replace the value.    
+    if (alreadyExists === true) {
+        var count = parseOrdererCount(key);
+        count++;
+        var newValue = '#O#' + orderer + '#F#' + firm + '#C#' + count;
+        scriptProps.setProperty(key, newValue);
+        
+        // If no existing instance, create a new record
+    } else {
+      // Create order key string using #O# as the pattern for the first three characters concatenated with the now ISO string.
+      var now = new Date().toISOString();
+      var key = '#K#' + now;
+      
+      // Create value string using #O#ordererName#F#firmName#C#count pattern and store it.
+      var value = '#O#' + orderer + '#F#' + firm + '#C#' + '1';
+      scriptProps.setProperty(key, value);
+    };
+
+  // If keys.length = 0, record the first order instance for this reporting period.        
   } else {
     // Create order key string using #O# as the pattern for the first three characters concatenated with the now ISO string.
     var now = new Date().toISOString();
@@ -57,20 +64,25 @@ function sendOrderActivityReport() {
   var keys = props.getKeys();
   var reportText = 'Here\'s the ordering activity for this week:\n\nCount   Orderer\n';
   
-  if (keys.length != 0) {
-    // Structure email with top orderers first. 50 because the App assumes nobody is going to order more than 50x in a week.
-    for (var i = 50; i > 0; i--) {
-      keys.forEach(function(key) {
-        if(parseOrdererCount(key) == i) {
-          reportText += i + '           ' + parseOrdererInfo(key) + '\n';
-        };
-      });  
+  try {
+    if (keys.length != 0) {
+      // Structure email with top orderers first. 50 because the App assumes nobody is going to order more than 50x in a week.
+      for (var i = 35; i > 0; i--) {
+        for (var j = 0; j < keys.length; j++) {
+          if(parseOrdererCount(keys[j]) === i) {
+            reportText += i + '           ' + parseOrdererInfo(keys[j]) + '\n';
+          };
+        };  
+      };
     };
+    
+    var date = toStringDate(new Date().toISOString());
+    
+    GmailApp.sendEmail('davis@eazl.co', 'Order Activity Report for Week Prior to ' + date, reportText, { name: 'SALS Reporting Bot'});
+    
+  } catch (error) {
+    addToDevLog('Error inside sendOrderActivityReport: ' + error);
   };
-  
-  var date = toStringDate(new Date().toISOString());
-  
-  GmailApp.sendEmail('davis@eazl.co', 'Order Activity Report for Week Prior to ' + date, reportText);
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -155,4 +167,17 @@ function seeScriptPropsValues() {
 /** Wipes Script Properties. */
 function deleteScriptProps() {
   var keys = PropertiesService.getScriptProperties().deleteAllProperties();
+};
+
+/** Sets dummy data for Script Properties */
+function setDummyScriptPropsData() {
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty('#K#2020-01-07T21:54:02.589Z', '#O#Davis Jones#F#Meg Media Inc.#C#4');
+  props.setProperty('#K#2020-02-07T21:54:02.589Z', '#O#Sandra Smith#F#Judo Law Firm#C#1');
+  props.setProperty('#K#2020-02-07T20:54:02.589Z', '#O#Bill Paxton#F#Coffee Legal Inc.#C#1');
+  props.setProperty('#K#2020-03-07T22:54:02.589Z', '#O#Dolly Parton#F#Hippy Law LLC#C#6');
+  props.setProperty('#K#2020-03-07T23:54:02.589Z', '#O#Johnny Cash#F#BBQ Legal Fund#C#7');
+  props.setProperty('#K#2020-03-07T23:55:02.589Z', '#O#Willie Nelson#F#Sushi Legal International#C#1');
+  props.setProperty('#K#2020-04-07T10:54:02.589Z', '#O#Jimi Hendrix#F#Jones Day Legal#C#1');
+  props.setProperty('#K#2020-04-07T11:54:02.589Z', '#O#John Medeski#F#San Antonio Law LLC#C#1');
 };

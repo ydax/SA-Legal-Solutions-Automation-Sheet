@@ -38,13 +38,21 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy);
   SpreadsheetApp.getActiveSpreadsheet().toast('🎥 Video Worksheet updated');
   
+  // Adds deposition information to CR Worksheet
+  updateCRWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy);
+  SpreadsheetApp.getActiveSpreadsheet().toast('✍️ CR Worksheet updated');
+
+  // Adds deposition information to Confirmation of Scheduling  
+  updateConfirmationOfScheduling(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy, videographer, pip);
+  SpreadsheetApp.getActiveSpreadsheet().toast('🗓 Confirmation of Scheduling updated');
+  
   // Adds the deposition to the Services calendar and logs it for internal record keeping.
   var event = addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   addOrderToLog(orderedBy, firm);
   SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // Sends a confirmation email to orderer
-  sendConfirmationToOrderer(orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  sendConfirmationToOrderer(orderedBy, orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
 };
 
@@ -105,13 +113,22 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[8], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], previousOrderer);
   SpreadsheetApp.getActiveSpreadsheet().toast('🎥 Video Worksheet updated');
   
+  // Adds deposition information to CR Worksheet
+  updateCRWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[8], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], infoFromPreviousOrderer[7], previousOrderer);
+  SpreadsheetApp.getActiveSpreadsheet().toast('✍️ CR Worksheet updated');
+  
+  // Adds deposition information to Confirmation of Scheduling  
+  //                            locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter,  firm,                       attorney,                   firmAddress1,                firmAddress2,               city,                      state,                     zip, attorneyPhone, orderedBy, videographer, pip) {
+  updateConfirmationOfScheduling(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], infoFromPreviousOrderer[7], previousOrderer, videographer, pip);
+  SpreadsheetApp.getActiveSpreadsheet().toast('🗓 Confirmation of Scheduling updated');
+  
   // Adds the deposition to the Services calendar and logs it.
   addEvent(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   addOrderToLog(previousOrderer, infoFromPreviousOrderer[0]);
   SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // Sends a confirmation email to orderer
-  sendConfirmationToOrderer(ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  sendConfirmationToOrderer(previousOrderer, ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
 };
 
@@ -179,6 +196,67 @@ function updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, 
   videoSheet.getRange('B26').setValue(state);
   videoSheet.getRange('C26').setValue(zip);
   videoSheet.getRange('H55').setValue(orderedBy);
+};
+
+/** Updates the CR Worksheet with the most recently-entered deposition information.
+@params {depositionInformation} strings Deposition information received from the sidebar.
+*/
+function updateCRWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy) {
+  var crSheet = SpreadsheetApp.getActive().getSheetByName('CR Worksheet');
+  
+  // Sets values inside CR Worksheet.
+  crSheet.getRange('B7').setValue(locationFirm);
+  crSheet.getRange('B8').setValue(locationAddress1);
+  crSheet.getRange('B9').setValue(locationAddress2);
+  crSheet.getRange('B10').setValue(locationCity);
+  crSheet.getRange('C10').setValue(locationState);
+  crSheet.getRange('D10').setValue(locationZip);
+  crSheet.getRange('F7').setValue(depoDate);
+  crSheet.getRange('F8').setValue(witnessName);
+  crSheet.getRange('F9').setValue(caseStyle);
+  crSheet.getRange('F11').setValue(depoTime);
+  crSheet.getRange('B11').setValue(courtReporter);
+  crSheet.getRange('D20').setValue(firm);
+  crSheet.getRange('B19').setValue(attorney);
+  crSheet.getRange('E21').setValue(attorneyEmail);
+  crSheet.getRange('A22').setValue(firmAddress1);
+  crSheet.getRange('C22').setValue(firmAddress2);
+  crSheet.getRange('A23').setValue(city);
+  crSheet.getRange('B23').setValue(state);
+  crSheet.getRange('C23').setValue(zip);
+  crSheet.getRange('C21').setValue(attorneyPhone);
+  crSheet.getRange('H57').setValue(orderedBy);
+};
+
+/** Updates the Confirmation of Scheduling with the most recently-entered deposition information.
+@params {depositionInformation} strings Deposition information received from the sidebar.
+*/
+function updateConfirmationOfScheduling(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy, videographer, pip) {
+  var confSheet = SpreadsheetApp.getActive().getSheetByName('Confirmation of Scheduling');
+  
+  // Sets values inside CR Worksheet.
+  confSheet.getRange('C18').setValue(locationFirm);
+  confSheet.getRange('C19').setValue(locationAddress1);
+  confSheet.getRange('C20').setValue(locationAddress2);
+  confSheet.getRange('C21').setValue(locationCity);
+  confSheet.getRange('D21').setValue(locationState);
+  confSheet.getRange('E21').setValue(locationZip);
+  confSheet.getRange('G16').setValue(depoDate);
+  confSheet.getRange('G20').setValue(witnessName);
+  confSheet.getRange('C16').setValue(caseStyle);
+  confSheet.getRange('G18').setValue(depoTime);
+  confSheet.getRange('C22').setValue(courtReporter);
+  confSheet.getRange('C8').setValue(firm);
+  confSheet.getRange('G22').setValue(attorney);
+  confSheet.getRange('G8').setValue(firmAddress1);
+  confSheet.getRange('G9').setValue(firmAddress2);
+  confSheet.getRange('G10').setValue(city);
+  confSheet.getRange('H10').setValue(state);
+  confSheet.getRange('I10').setValue(zip);
+  confSheet.getRange('E11').setValue(attorneyPhone);
+  confSheet.getRange('C10').setValue(orderedBy);
+  confSheet.getRange('E22').setValue(videographer);
+  confSheet.getRange('D28').setValue(pip);
 };
 
 /** Prints an array to the final row of the "Schedule a depo" sheet
