@@ -68,9 +68,8 @@ X 5. Add in automatically-generated email feature for new depos
 X 6. Add in automatic calendar population for new depos (incl. tag)
 X 7. Add onChange fcn that looks for changes in Schedule a Depo columns, and change calendar event if needed
 8. Add data push functionality from Schedule a Depo to Current List
-9. Create automatic reporting for Blake
-10. Create documentation
-   - they'll need to add an email address for all previous orderers for the automatic emails to deploy
+X 9. Create automatic reporting for Blake
+X 10. Create documentation
 
 
 NOTES

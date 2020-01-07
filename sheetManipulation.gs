@@ -32,21 +32,19 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   // Formats the array for Google Sheets setValue() method, calls printing function
   var formattedArray = [newScheduledDepo];
   printNewDeposition(formattedArray);
-  
-  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
+  
+  // Adds deposition information to Video Worksheet
+  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy);
+  SpreadsheetApp.getActiveSpreadsheet().toast('🎥 Video Worksheet updated');
   
   // Adds the deposition to the Services calendar and logs it for internal record keeping.
   var event = addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   addOrderToLog(orderedBy, firm);
-  
-  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // Sends a confirmation email to orderer
   sendConfirmationToOrderer(orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
-  
-  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
 };
 
@@ -77,8 +75,6 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   for (var i = 0; i < infoFromPreviousOrderer.length; i++) {
     newScheduledDepo.push(infoFromPreviousOrderer[i]);
   };
-  
-  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('📙️ Found attorney and firm info');
   
   // Convert PIP boolean value into "yes" or "no" string
@@ -103,21 +99,19 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   // Formats the array for Google Sheets setValue() method, calls printing function
   var formattedArray = [newScheduledDepo];
   printNewDeposition(formattedArray);
-  
-  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('➕️ Depo added to Schedule a depo sheet');
+  
+  // Adds deposition information to Video Worksheet
+  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[8], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], previousOrderer);
+  SpreadsheetApp.getActiveSpreadsheet().toast('🎥 Video Worksheet updated');
   
   // Adds the deposition to the Services calendar and logs it.
   addEvent(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   addOrderToLog(previousOrderer, infoFromPreviousOrderer[0]);
-  
-  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // Sends a confirmation email to orderer
   sendConfirmationToOrderer(ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
-  
-  // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
 };
 
@@ -156,6 +150,35 @@ function getPreviousOrderers () {
   var sortedUniqueArray = uniqueArray.sort();
   
   return sortedUniqueArray;
+};
+
+/** Updates the Video Worksheet with the most recently-entered deposition information.
+@params {depositionInformation} strings Deposition information received from the sidebar.
+*/
+function updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy) {
+  var videoSheet = SpreadsheetApp.getActive().getSheetByName('Video Worksheet');
+  
+  // Sets values inside video worksheet.
+  videoSheet.getRange('B9').setValue(locationFirm);
+  videoSheet.getRange('B10').setValue(locationAddress1);
+  videoSheet.getRange('B11').setValue(locationAddress2);
+  videoSheet.getRange('B12').setValue(locationCity);
+  videoSheet.getRange('C12').setValue(locationState);
+  videoSheet.getRange('D12').setValue(locationZip);
+  videoSheet.getRange('F9').setValue(depoDate);
+  videoSheet.getRange('F10').setValue(witnessName);
+  videoSheet.getRange('F11').setValue(caseStyle);
+  videoSheet.getRange('F14').setValue(depoTime);
+  videoSheet.getRange('B13').setValue(courtReporter);
+  videoSheet.getRange('B22').setValue(firm);
+  videoSheet.getRange('B20').setValue(attorney);
+  videoSheet.getRange('D21').setValue(attorneyEmail);
+  videoSheet.getRange('B24').setValue(firmAddress1);
+  videoSheet.getRange('B25').setValue(firmAddress2);
+  videoSheet.getRange('A26').setValue(city);
+  videoSheet.getRange('B26').setValue(state);
+  videoSheet.getRange('C26').setValue(zip);
+  videoSheet.getRange('H55').setValue(orderedBy);
 };
 
 /** Prints an array to the final row of the "Schedule a depo" sheet
