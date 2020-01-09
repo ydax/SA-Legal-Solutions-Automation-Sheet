@@ -34,6 +34,20 @@ function searchByWitness() {
   displayWitnessSearch();
 };
 
+/** Queries the "Schedule a depo" Sheet and creates string to be displayed in modal for user */
+function searchByCase() {
+  // Prompts the user to enter a search query, captures their response
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.prompt("⚖️ Enter your case style search", "Your search query must match the Case Style in Column F\nof the Schedule a depo Sheet exactly\n\n✅ Tim Duncan v. Michael Jordan\n\n", ui.ButtonSet.OK);
+  if (response.getSelectedButton() == ui.Button.OK) {
+    var query = response.getResponseText();
+  };
+  
+  // Store the search query in the "Infrastructure" Sheet
+  SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(9, 2).setValue(query);
+  
+  displayCaseSearch();
+};
 
 /** Returns a string with witness name search results from "Schedule a depo" Sheet
 @return string HTML-formatted string containing results of search query
@@ -138,6 +152,60 @@ function searchDate () {
   return resultString;
 };
 
+/** Returns an array of case style search results from "Schedule a depo" Sheet
+@return string HTML-formatted string that can be injected into a modal
+*/
+function searchCase () {
+ // Grabs data from the "Schedule a depo" Sheet, iterates over each row, and pushes results to an array
+  var results = [];
+  var ss = SpreadsheetApp.getActive();
+  var scheduleSheet = ss.getSheetByName('Schedule a depo');
+  var allScheduledData = scheduleSheet.getRange(2, 1, scheduleSheet.getLastRow(), scheduleSheet.getLastColumn()).getValues();
+  
+  // Get case style query consumed from user input and added to the "Infrastructure" sheet
+  var query = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(9, 2).getValue().toString();
+  
+  // Grabs data from the "Schedule a depo" Sheet, iterates over each row, and pushes results to an array
+  var allScheduledData = scheduleSheet.getRange(2, 1, scheduleSheet.getLastRow(), scheduleSheet.getLastColumn()).getValues();
+  for (var i = 0; i < allScheduledData.length; i++) {
+    if(allScheduledData[i][5] == query) {
+      results.push(allScheduledData[i]);
+    };
+  };
+  
+  var resultString = ''; 
+  
+  // Determines whether results were found, prints response on Search Sheet 
+  if (results.length == 0) {
+    var rawDate = query.toString();
+    var date = rawDate.substring(0, 15);
+    return '⚠️ No depositions found matching ' + query + '. Make sure that you entered the case style query exactly as it\'s written in the Schedule a depo Sheet.';
+  } else {
+
+    // Format the string contribution for each result    
+    for (var i = 0; i < results.length; i++) {
+      var resultCount = i + 1;
+      resultString += '<strong>↩ Result ' + resultCount + '</strong><br>';
+      var rawDate = results[i][1].toString();
+      var date = rawDate.substring(0, 15);
+      var witness = results[i][2];
+      var orderer = results[i][3];
+      var firm = results[i][7];
+      var ordererEmail = results[i][4];
+      var caseStyle = results[i][5];
+      var services = results[i][23];
+      var courtReporter = results[i][24];
+      var videographer = results[i][25];
+      var pip = results[i][26];
+      var depoCity = results[i][19];
+      var depoState = results[i][20];
+      resultString += '1️⃣ Key Information:<br>Deposition Date: <em>' + date + '</em><br>Witness: <em>' + witness + '</em><br>Firm: <em> '+ firm + '</em><br>Ordered by: <em>' + orderer + '</em><br><br>2️⃣ Additional Information:<br>' + '</em>Orderer email: <em>' + ordererEmail + '</em><br>Services: <em>' + services + '</em><br>Court reporter? <em>' + courtReporter + '</em><br>Videographer? <em>' + videographer + '</em><br>PIP? <em>' + pip + '</em><br>City: <em>' + depoCity + '</em><br>State: <em>' + depoState + '</em><br><br>';
+    };
+  };
+  return resultString;
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// DISPLAY FUNCTIONS /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -154,12 +222,23 @@ function displayDateSearch() {
   .showModalDialog(html, headerString);
 };
 
-
 function displayWitnessSearch() {
   var template = HtmlService.createTemplateFromFile('displayWitnessSearch');
   var headerString = '🔎 Search results for ' + SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(8, 2).getValue();
   template.automationInfo = searchWitness();
   var html = template.evaluate().setTitle('🔎 Search by Witness Results')
+    .setWidth(800)
+    .setHeight(800);
+  SpreadsheetApp.getUi() 
+  .showModalDialog(html, headerString);
+};
+
+function displayCaseSearch() {
+  var template = HtmlService.createTemplateFromFile('displayCaseSearch');
+  var caseStyle = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(9, 2).getValue()
+  var headerString = '🔎 Search results for ' + caseStyle;
+  template.automationInfo = searchCase();
+  var html = template.evaluate().setTitle('🔎 Search by Case Results')
     .setWidth(800)
     .setHeight(800);
   SpreadsheetApp.getUi() 

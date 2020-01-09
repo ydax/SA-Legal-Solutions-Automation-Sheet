@@ -22,7 +22,8 @@ function onOpen (e) {
      .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
   .addSubMenu(SpreadsheetApp.getUi().createMenu("🔎 Search")
      .addItem("📅 By Date", "searchByDate")
-     .addItem("👤 By Witness", "searchByWitness"))
+     .addItem("👤 By Witness", "searchByWitness")
+     .addItem("⚖️ By Case", "searchByCase"))
   .addToUi();
 }
 
@@ -50,7 +51,25 @@ function launchRepeatOrdererSidebar() {
   SpreadsheetApp.getUi().showSidebar(html);
 };
 
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////// APPLICATION DEVELOPMENT LOG ///////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 /** 
+--- Version 1.1 Modifications, Started Thursday, January 9th ---
+X • Add a Search by Case Style function that returns all depositions for that case, with the same information as the Search by Date function
+• Enable synching between the Schedule a depo Sheet's deposition location and services information and the Services Calendar
+• Make the confirmation email optional in the sidebars
+• Have the confirmation emails come from depos@salegalsolutions.com, and bcc shannonk@salegalsolutions.com
+• Expand the sidebars to add Copy Attorney information: firm name, attorney, their address (Columns B:J on the Schedule a depo Sheet)
+• Add the internal record-keeping fields on the CR Worksheet and Video Worksheet at top
+• On the addition of a new deposition, automatically populate Columns A:K on the Current List Sheet and set Status (Column A) to Current. Reduce Status options to "Current" and "Cancelled" only.
+• On deposition Cancel in the Schedule a depo Sheet: remove Calendar event from Services, add CANCELED in front of the title, and add it to the Cancelled Calendar, and remove it from the Current List Sheet
+• Enable date changes from Schedule a depo Sheet to reflect on the Current List as well
+• On date and time changes made to the Schedule a depo Sheet, auto-populate the worksheets again
+• If the logged in user isn’t depos@salegalsolutions.com, remove the automation options
+
+
+--- Version 1.0, Started on Friday, December 20th 2019 ---
 REQUIREMENTS
 • Streamline the process of entering a new deposition. I plan to do this by building a custom interface that can be activated within the Google Sheet, which can then be used to add new depositions ordered by (1) repeat orderers and (2) new clients, and which will trigger automated population of the Automations Sheet, as well as a calendar event and an automatically-generated confirmation email to the orderer.
 • Adding custom search functionality that enables the SA Legal Solutions team to search by deposition date, orderer, and ordering firm.
@@ -67,7 +86,7 @@ X 4. Add querying features
 X 5. Add in automatically-generated email feature for new depos
 X 6. Add in automatic calendar population for new depos (incl. tag)
 X 7. Add onChange fcn that looks for changes in Schedule a Depo columns, and change calendar event if needed
-8. Add data push functionality from Schedule a Depo to Current List
+X 8. Add data push functionality from Schedule a Depo to Current List
 X 9. Create automatic reporting for Blake
 X 10. Create documentation
 

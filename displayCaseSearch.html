@@ -1,0 +1,22 @@
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  </head>
+  <body>
+    <p class="flow-text" id="test">Loading...</p>
+  </body>
+
+<script type="text/javascript">
+function onSuccess(items) {
+document.getElementById('test').innerHTML = items;
+}
+google.script.run.withSuccessHandler(onSuccess).searchCase();
+document.getElementById('test').innerHTML = "🤖 Loading your information...";
+</script>
+
