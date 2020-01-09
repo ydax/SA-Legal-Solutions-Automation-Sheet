@@ -37,6 +37,11 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
 @dev Called by onEdit(e) trigger
 */
 function manuallyUpdateCalendar(e) {
+  
+  // Sets a mutual-exclusion lock to prevent code collisions if user is making multiple quick edits.
+  var lock = LockService.getDocumentLock();
+  lock.waitLock(6000);
+  
   var SACal = CalendarApp.getCalendarById('salegalsolutions.com_17vfv1akbq03ro6jvtsre0rv84@group.calendar.google.com');
   var ss = SpreadsheetApp.getActive();
   var depoSheet = ss.getSheetByName('Schedule a depo');
@@ -49,73 +54,182 @@ function manuallyUpdateCalendar(e) {
     var editRow = e.range.getRow();
     var editColumn = e.range.getColumn();
     
-    // Routing the edit if it was made to the event time. 7 because Start Time is in Column G.
-    if (editColumn === 7) {
-      // Get information used in date modification
-      var oldValue = e.oldValue;
-      var newValue = e.value;
-      var eventId = depoSheet.getRange(editRow, 37).getValue();
-      
-      // See if the newly-added time is in HH:MM AM format. If not, reject the change.
-      var lastThreeCharacters = newValue.slice(-3);
-      var validationCheck = false;
-      if (lastThreeCharacters === ' PM' || lastThreeCharacters === ' AM') {
-        validationCheck = true;
-      };
-      if (validationCheck !== true) {
-        SpreadsheetApp.getUi().alert('⚠️ Incorrect Format. Please add the new time in Hour:Minute AM/PM format. Note that AM or PM must be capitalized. Your edit to row ' + editRow + ', column ' + editColumn + ' was not saved.')
-        depoSheet.getRange(editRow, editColumn).setValue(oldValue);
-      } else {
-        // Constructs the new time (date obj).
-        var newTime = new Date(dateFromHour(newValue, editRow));
-        
-        // Tries to update Services calendar, alerts user with result.
-        try {
-          // Deletes old event and adds a new one at the correct time.
-          var title = SACal.getEventById(eventId).getTitle();
-          var description = SACal.getEventById(eventId).getDescription();
-          var location = SACal.getEventById(eventId).getLocation();
-          SACal.getEventById(eventId).deleteEvent();
-          var event = SACal.createEvent(title, newTime, newTime,{ description: description, location: location });
-          
-          // Add new eventId to the Schedule a depo Sheet.
-          depoSheet.getRange(editRow, 37).setValue(event.getId());
-          ss.toast('✅ Services Calendar Updated Successfully');
-        } catch (error) {
-          SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition time you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
-          addToDevLog('In event time onEdit function: ' + error);
-        };
-      };
-      
-    }
+    /////////////////////////////////////////////////
+    // ROUTING BASED ON THE COLUMN THAT WAS EDITED //
+    /////////////////////////////////////////////////
     
-    // Routing if it was made to event date. 2 because Date is in Column B.
-    else if (editColumn === 2) {
-      // Gets raw information used in date modification.
-      var newValue = e.value;
-      var newUnformattedDate = floatToCSTDate(newValue);
-      var eventId = depoSheet.getRange(editRow, 37).getValue();
+    switch(editColumn) {
+      // Routing if it was made to event date. 2 because Date is in Column B.
+      case (2):
+        editDepoDate(e, ss, SACal, depoSheet, editColumn, editRow);
+        break;
+        
+      // Routing the edit if it was made to the event time. 7 because Start Time is in Column G.
+      case (7):
+        editDepoTime(e, ss, SACal, depoSheet, editColumn, editRow);
+        break;
       
-      var newTime = new Date(dateFromDate(newUnformattedDate, editRow));
-      Logger.log(newTime);
+      // Routing if the edit is made to the deposition location. 17 - 22 because these are the location information columns.  
+      case (17):
+      case (18):
+      case (19):
+      case (20):
+      case (21):
+      case (22):
+        editDepoLocation(e, ss, SACal, depoSheet, editColumn, editRow);
+        break;
         
-      // Tries to update Services calendar, alerts user with result.
-      try {
-        // Deletes old event and adds a new one at the correct time.
-        var title = SACal.getEventById(eventId).getTitle();
-        var description = SACal.getEventById(eventId).getDescription();
-        var location = SACal.getEventById(eventId).getLocation();
-        SACal.getEventById(eventId).deleteEvent();
-        var event = SACal.createEvent(title, newTime, newTime,{ description: description, location: location });
-        
-        // Add new eventId to the Schedule a depo Sheet.
-        depoSheet.getRange(editRow, 37).setValue(event.getId());
-        ss.toast('✅ Services Calendar Updated Successfully');
-      } catch (error) {
-        SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition date you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
-        addToDevLog('In event date onEdit function: ' + error);
-      };
+        // NEXT: services information and the Services Calendar
+      
+      default:
+        Logger.log('There are no more cases currently supported.');
     };
+  };
+  
+  // Releases the mutual exclusion lock.
+  lock.releaseLock();
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////
+/////// INDIVIDUAL FUNCTIONS TO HANDLE MANUAL EDITS AND SYNC WITH CALENDAR /////////
+////////////////////////////////////////////////////////////////////////////////////
+
+/** Deletes old calendar event, adds a new one with the updated date
+@params {multiple} Event object, spreadsheet data, calendar data, and event edit data passed from manuallyUpdateCalendar() function.
+*/
+function editDepoDate(e, ss, SACal, depoSheet, editColumn, editRow) {
+  var newValue = e.value;
+  var newUnformattedDate = floatToCSTDate(newValue);
+  var eventId = depoSheet.getRange(editRow, 37).getValue();
+  
+  var newTime = new Date(dateFromDate(newUnformattedDate, editRow));
+  
+  // Tries to update Services calendar, alerts user with result.
+  try {
+    // Deletes old event and adds a new one at the correct date.
+    var title = SACal.getEventById(eventId).getTitle();
+    var description = SACal.getEventById(eventId).getDescription();
+    var location = SACal.getEventById(eventId).getLocation();
+    SACal.getEventById(eventId).deleteEvent();
+    var event = SACal.createEvent(title, newTime, newTime,{ description: description, location: location });
+    
+    // Add new eventId to the Schedule a depo Sheet.
+    depoSheet.getRange(editRow, 37).setValue(event.getId());
+    ss.toast('✅ Services Calendar Updated Successfully');
+  } catch (error) {
+    SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition date you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
+    addToDevLog('In event date onEdit function: ' + error);
+  };
+};
+
+/** Deletes old calendar event, adds a new one with the updated time.
+@params {multiple} Event object, spreadsheet data, calendar data, and event edit data passed from manuallyUpdateCalendar() function.
+*/
+function editDepoTime(e, ss, SACal, depoSheet, editColumn, editRow) {
+  var oldValue = e.oldValue;
+  var newValue = e.value;
+  var eventId = depoSheet.getRange(editRow, 37).getValue();
+  
+  // See if the newly-added time is in HH:MM AM format. If not, reject the change.
+  var lastThreeCharacters = newValue.slice(-3);
+  var validationCheck = false;
+  if (lastThreeCharacters === ' PM' || lastThreeCharacters === ' AM') {
+    validationCheck = true;
+  };
+  if (validationCheck !== true) {
+    SpreadsheetApp.getUi().alert('⚠️ Incorrect Format. Please add the new time in Hour:Minute AM/PM format. Note that AM or PM must be capitalized. Your edit to row ' + editRow + ', column ' + editColumn + ' was not saved.')
+    depoSheet.getRange(editRow, editColumn).setValue(oldValue);
+  } else {
+    // Constructs the new time (date obj).
+    var newTime = new Date(dateFromHour(newValue, editRow));
+    
+    // Tries to update Services calendar, alerts user with result.
+    try {
+      // Deletes old event and adds a new one at the correct time.
+      var title = SACal.getEventById(eventId).getTitle();
+      var description = SACal.getEventById(eventId).getDescription();
+      var location = SACal.getEventById(eventId).getLocation();
+      SACal.getEventById(eventId).deleteEvent();
+      var event = SACal.createEvent(title, newTime, newTime,{ description: description, location: location });
+      
+      // Add new eventId to the Schedule a depo Sheet.
+      depoSheet.getRange(editRow, 37).setValue(event.getId());
+      ss.toast('✅ Services Calendar Updated Successfully');
+    } catch (error) {
+      SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition time you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
+      addToDevLog('In event time onEdit function: ' + error);
+    };
+  };
+};
+
+/** Deletes old calendar event, adds a new one with the updated deposition location.
+@params {multiple} Event object, spreadsheet data, calendar data, and event edit data passed from manuallyUpdateCalendar() function.
+*/
+function editDepoLocation(e, ss, SACal, depoSheet, editColumn, editRow) {
+  var oldValue = e.oldValue;
+  var newValue = e.value;
+  var eventId = depoSheet.getRange(editRow, 37).getValue();
+  
+  // Tries to update Services calendar, alerts user with result.
+  try {
+    
+    // Stores new event data and formats it.
+    var services = depoSheet.getRange(editRow, 24).getValue();
+    var firm = depoSheet.getRange(editRow, 8).getValue();
+    var witnessName = depoSheet.getRange(editRow, 3).getValue();
+    var depoTime = amPmTo24(depoSheet.getRange(editRow, 7).getValue());
+    var rawDepoDate = depoSheet.getRange(editRow, 2).getValue().toString();
+    var monthNumber = monthToMm(rawDepoDate.substring(4, 7));
+    var dayNumber = rawDepoDate.substring(8, 10);
+    var yearNumber = rawDepoDate.substring(11, 15);
+    var dashDate = yearNumber + '-' + monthNumber + '-' + dayNumber;
+    var formattedDate = toStringDate(dashDate);
+    var formattedDateAndHour = formattedDate + ' ' + depoTime;
+    var locationFirm = depoSheet.getRange(editRow, 3).getValue();
+    var locationAddress1 = depoSheet.getRange(editRow, 17).getValue();
+    var locationAddress2 = depoSheet.getRange(editRow, 18).getValue();
+    var locationCity = depoSheet.getRange(editRow, 19).getValue();
+    var locationState = depoSheet.getRange(editRow, 20).getValue();
+    var locationZip = depoSheet.getRange(editRow, 21).getValue(); 
+    var caseStyle = depoSheet.getRange(editRow, 21).getValue(); 
+    var orderedBy = depoSheet.getRange(editRow, 4).getValue(); 
+    var courtReporter = depoSheet.getRange(editRow, 25).getValue(); 
+    var videographer = depoSheet.getRange(editRow, 26).getValue(); 
+    var pip = depoSheet.getRange(editRow, 27).getValue(); 
+    var attorney = depoSheet.getRange(editRow, 9).getValue(); 
+    var firmAddress1 = depoSheet.getRange(editRow, 10).getValue(); 
+    var firmAddress2 = depoSheet.getRange(editRow, 11).getValue(); 
+    var city = depoSheet.getRange(editRow, 12).getValue(); 
+    var state = depoSheet.getRange(editRow, 13).getValue(); 
+    var zip = depoSheet.getRange(editRow, 14).getValue(); 
+    
+    // Creates event title and description.
+    var title = '(' + services + ')' + ' ' + firm + ' - ' + witnessName;
+    var depoLocation = locationFirm + ', ' + locationAddress1 + ' ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
+    var description = 'Witness Name: ' + witnessName + '\nCase Style: ' + caseStyle + '\nOrdered by: ' + orderedBy + '\n\nCSR: ' +courtReporter + '\nVideographer: ' + videographer + '\nPIP: ' + pip + '\n\nLocation: ' + '\n' + depoLocation + '\n\nOur client:\n' + attorney + '\n' + firm + '\n' + firmAddress1 + ' ' + firmAddress2 + '\n' + city + ' ' + state + ' ' + zip;
+    
+    // Adds the newly-updated deposition event to the Services calendar.
+    var event = SACal.createEvent(title, 
+       new Date(formattedDateAndHour),
+       new Date(formattedDateAndHour),{
+         description: description,
+         location: depoLocation
+         });
+
+    // Deletes the old event in the Services Calendar.
+    SACal.getEventById(eventId).deleteEvent();
+    
+    // Sets the value of the new event ID in column 37 of Schedule a depo. 
+    depoSheet.getRange(editRow, 37).setValue(event.getId());
+    
+    // Alerts the user that the change was successful.
+    ss.toast('✅ Services Calendar Updated Successfully');
+
+  // Catches any errors and adds them to the developer logs.
+  } catch (error) {
+    SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition location information you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
+    addToDevLog('In event time onEdit function: ' + error);
   };
 };
 
