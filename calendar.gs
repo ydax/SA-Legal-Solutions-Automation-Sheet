@@ -143,6 +143,10 @@ function editDepoDate(e, ss, SACal, depoSheet, editColumn, editRow) {
     SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition date you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
     addToDevLog('In event date onEdit function: ' + error);
   };
+  
+  // Updates the date of the event in the Current List Sheet.
+  modifyDepoDateInCurrentList(e, newTime, editRow);
+  
 };
 
 /** Deletes old calendar event, adds a new one with the updated time.
@@ -254,6 +258,64 @@ function editDepoGeneral(e, ss, SACal, depoSheet, editColumn, editRow) {
     addToDevLog('In event time onEdit function: ' + error);
   };
 };
+
+/** Modifies the date of a deposition in the Current List Sheet on edit made to date column of Schedule a depo Sheet.
+@param {e} object Event object created by onEdit(e) triggered event.
+@param {newDate} object Date object constructed inside editDepoDate representing the new deposition date.
+@param {editRow} number Row in Schedule a depo Sheet that's been edited.
+*/
+function modifyDepoDateInCurrentList(e, newDate, editRow) {
+  var ss = SpreadsheetApp.getActive();
+  var currentListSheet = ss.getSheetByName('Current List');
+  var scheduleSheet = ss.getSheetByName('Schedule a depo');
+  
+  // Builds the old date object to enable search in Current List Sheet.
+  var unformattedOldDate = floatToCSTDate(e.oldValue);
+  var oldDate = new Date(dateFromDate(unformattedOldDate, editRow));
+  var oldDateString = oldDate.toString();
+  
+  // Formats event time so that it can be searched for in the Current List Sheet.
+  var month = monthToMm(oldDateString.substring(4, 7));
+  var day = oldDateString.substring(8, 10);
+  var currentListSearchDate = month + '-' + day;
+  
+  // Creates an array of row numbers in the Current List matching the currentListSearchDate.
+  var currentListData = currentListSheet.getRange(2, 1, currentListSheet.getLastRow(), currentListSheet.getLastColumn()).getValues();
+  var matchingDateRows = [];
+  for (var i = 0; i < currentListData.length; i++ ) {
+    if (currentListData[i][0] === currentListSearchDate) {
+      matchingDateRows.push(i + 2);
+    };
+  };
+  
+  var rowToModify;
+  
+  // If there's more than one matching row from the Current List, cycle through and look for witness match.
+  if (matchingDateRows.length === 0) {
+    SpreadsheetApp.getActiveSpreadsheet().toast('❌ Matching depo not found in Current List. Nothing modified in Current List Sheet.');
+  } else if (matchingDateRows.length === 1) {
+    rowToModify = matchingDateRows[0];
+  } else {
+    var witness = scheduleSheet.getRange(editRow, 3).getValue();
+    Logger.log(witness);
+    matchingDateRows.forEach(function(matchingRow) {
+      if (currentListSheet.getRange(matchingRow, 2).getValue() === witness) {
+        rowToModify = matchingRow;
+      };
+    });
+  };
+  
+  // Builds the new date string that will be overwritten to Current List Sheet.
+  var newDateString = newDate.toString();
+  var month = monthToMm(newDateString.substring(4, 7));
+  var day = newDateString.substring(8, 10);
+  var updatedDate = month + '-' + day;
+  
+  // Writes updated date value to the deposition in Current List Sheet.
+  currentListSheet.getRange(rowToModify, 1).setValue(updatedDate);
+  ss.toast('✅ Depo information in Current List Sheet updated successfully');
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// UTILITIES /////////////////////////////////////

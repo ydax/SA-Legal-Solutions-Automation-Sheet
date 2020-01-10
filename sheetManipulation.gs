@@ -386,6 +386,8 @@ function updateConfirmationOfScheduling(locationFirm, locationAddress1, location
   confSheet.getRange('D28').setValue(pip);
 };
 
+/** Updates Video Worksheet, CR Worksheet, and Confirmation of Scheduling on manual time or date edit to Schedule a depo Sheet. */
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// UTILITIES /////////////////////////////////////
