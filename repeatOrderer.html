@@ -40,7 +40,17 @@
                    $('#services').val(),
                    $('#courtReporter').val(),
                    $('#videographer').val(),
-                   $('#pip').prop('checked')
+                   $('#pip').prop('checked'),
+                   $('#copyAttorney').val(),
+                   $('#copyFirm').val(),
+                   $('#copyAddress1').val(),
+                   $('#copyAddress2').val(),
+                   $('#copyCity').val(),
+                   $('#copyState').val(),
+                   $('#copyZip').val(),
+                   $('#copyPhone').val(), 
+                   $('#copyEmail').val(),
+                   $('#sendConfirmation').prop('checked')
                 );
              };
     </script>
@@ -179,6 +189,80 @@
                         <label>
                             <input type="checkbox" id="pip" />
                             <span>PIP</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- Copy Attorney Information -->
+            <div class="row">
+                <hr class="divider red darken-3">
+                <p class="flow-text grey-text">Copy Attorney Information</p>
+                <blockquote>Leave section blank if no copy attorney.</blockquote>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">content_copy</i>
+                        <input type="text" id="copyAttorney" name="copyAttorney">
+                        <label for="copyAttorney">Copy Attorney</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">content_copy</i>
+                        <input type="text" id="copyFirm" name="copyFirm">
+                        <label for="copyFirm">Copy Firm</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">content_copy</i>
+                        <input type="text" id="copyAddress1" name="copyAddress1">
+                        <label for="copyAddress1">Copy Firm Address 1</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">content_copy</i>
+                        <input type="text" id="copyAddress2" name="copyAddress2">
+                        <label for="copyAddress2">Copy Firm Address 2</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input type="text" value="San Antonio" id="copyCity" name="copyCity">
+                        <label for="copyCity">City</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input type="text" value="TX" id="copyState" name="copyState">
+                        <label for="copyState">State</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <input type="text" placeholder="78232" id="copyZip" name="copyZip">
+                        <label for="copyZip">Zip</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">content_copy</i>
+                        <input type="text" id="copyPhone" name="copyPhone">
+                        <label for="copyPhone">Copy Attorney Phone</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">content_copy</i>
+                        <input type="email" class="validate" id="copyEmail" name="copyEmail">
+                        <label for="copyEmail">Copy Attorney Email</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Confirmation Email Option -->
+            <div class="row">
+                <hr class="divider red darken3">
+                <div class="row">
+                    <div class="input-field col s12">
+                    <label>
+                        <input type="checkbox" id="sendConfirmation" />
+                        <span>Send confirmation email to orderer?</span>
                         </label>
                     </div>
                 </div>

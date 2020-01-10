@@ -69,14 +69,28 @@ function manuallyUpdateCalendar(e) {
         editDepoTime(e, ss, SACal, depoSheet, editColumn, editRow);
         break;
       
-      // Routing if the edit is made to the deposition location. 17 - 22 because these are the location information columns.  
+      // Routing if the edit is made to Columns recorded in Calendar events.
+      case (3):
+      case (4):
+      case (6):
+      case (8):
+      case (9):
+      case (10):
+      case (11):
+      case (12):
+      case (13):
+      case (14):
       case (17):
       case (18):
       case (19):
       case (20):
       case (21):
       case (22):
-        editDepoLocation(e, ss, SACal, depoSheet, editColumn, editRow);
+      case (24):
+      case (25):
+      case (26):
+      case (27):
+        editDepoGeneral(e, ss, SACal, depoSheet, editColumn, editRow);
         break;
         
         // NEXT: services information and the Services Calendar
@@ -163,10 +177,10 @@ function editDepoTime(e, ss, SACal, depoSheet, editColumn, editRow) {
   };
 };
 
-/** Deletes old calendar event, adds a new one with the updated deposition location.
+/** Deletes old calendar event, adds a new one with the updated deposition information. For general use.
 @params {multiple} Event object, spreadsheet data, calendar data, and event edit data passed from manuallyUpdateCalendar() function.
 */
-function editDepoLocation(e, ss, SACal, depoSheet, editColumn, editRow) {
+function editDepoGeneral(e, ss, SACal, depoSheet, editColumn, editRow) {
   var oldValue = e.oldValue;
   var newValue = e.value;
   var eventId = depoSheet.getRange(editRow, 37).getValue();
@@ -207,7 +221,7 @@ function editDepoLocation(e, ss, SACal, depoSheet, editColumn, editRow) {
     // Creates event title and description.
     var title = '(' + services + ')' + ' ' + firm + ' - ' + witnessName;
     var depoLocation = locationFirm + ', ' + locationAddress1 + ' ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
-    var description = 'Witness Name: ' + witnessName + '\nCase Style: ' + caseStyle + '\nOrdered by: ' + orderedBy + '\n\nCSR: ' +courtReporter + '\nVideographer: ' + videographer + '\nPIP: ' + pip + '\n\nLocation: ' + '\n' + depoLocation + '\n\nOur client:\n' + attorney + '\n' + firm + '\n' + firmAddress1 + ' ' + firmAddress2 + '\n' + city + ' ' + state + ' ' + zip;
+    var description = 'Witness Name: ' + witnessName + '\nCase Style: ' + caseStyle + '\nOrdered by: ' + orderedBy + '\n\nCSR: ' + courtReporter + '\nVideographer: ' + videographer + '\nPIP: ' + pip + '\n\nLocation: ' + '\n' + depoLocation + '\n\nOur client:\n' + attorney + '\n' + firm + '\n' + firmAddress1 + ' ' + firmAddress2 + '\n' + city + ' ' + state + ' ' + zip;
     
     // Adds the newly-updated deposition event to the Services calendar.
     var event = SACal.createEvent(title, 
