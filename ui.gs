@@ -79,8 +79,8 @@ X • Enable synching between the Schedule a depo Sheet's deposition location an
 X • Make the confirmation email optional in the sidebars > this will default come from the logged in user of the Sheet
 X • Have the confirmation emails come from depos@salegalsolutions.com, and bcc shannonk@salegalsolutions.com
 X • Expand the sidebars to add Copy Attorney information: firm name, attorney, their address (Columns B:J on the Schedule a depo Sheet)
-• Add the internal record-keeping fields on the CR Worksheet and Video Worksheet at top
-• On the addition of a new deposition, automatically populate Columns A:K on the Current List Sheet and set Status (Column A) to Current. Reduce Status options to "Current" and "Cancelled" only.
+X • Add the internal record-keeping fields on the CR Worksheet and Video Worksheet at top
+X • On the addition of a new deposition, automatically populate Columns A:K on the Current List Sheet and set Status (Column A) to Current. Reduce Status options to "Current" and "Cancelled" only.
 • On deposition Cancel in the Schedule a depo Sheet: remove Calendar event from Services, add CANCELED in front of the title, and add it to the Cancelled Calendar, and remove it from the Current List Sheet
 • Enable date changes from Schedule a depo Sheet to reflect on the Current List as well
 • On date and time changes made to the Schedule a depo Sheet, auto-populate the worksheets again

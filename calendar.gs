@@ -59,6 +59,14 @@ function manuallyUpdateCalendar(e) {
     /////////////////////////////////////////////////
     
     switch(editColumn) {
+      // Routing if it was made to Status Column.
+      case (1):
+        if (depoSheet.getRange(editRow, 1).getValue() === '🔴 Cancelled') {
+          var eventId = depoSheet.getRange(editRow, 37).getValue();
+          cancelDepo(eventId, editRow);
+        };
+        break;
+        
       // Routing if it was made to event date. 2 because Date is in Column B.
       case (2):
         editDepoDate(e, ss, SACal, depoSheet, editColumn, editRow);
@@ -431,7 +439,8 @@ function seeCalendars () {
   var allCalendars = CalendarApp.getAllCalendars();
   allCalendars.forEach(function(calendar) {
     var id = calendar.getId();
-    Logger.log(id);
+    var name = calendar.getName();
+    Logger.log(name + ': ' + id);
   });
 };
 
