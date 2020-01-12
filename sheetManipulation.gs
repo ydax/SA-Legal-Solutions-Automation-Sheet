@@ -56,7 +56,6 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
-  Logger.log(sendConfirmation);
   if (sendConfirmation === true) {
     sendConfirmationToOrderer(orderedBy, orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
     SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
@@ -139,11 +138,13 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   // Adds deposition information to Confirmation of Scheduling  
   updateConfirmationOfScheduling(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], infoFromPreviousOrderer[7], previousOrderer, videographer, pip);
   SpreadsheetApp.getActiveSpreadsheet().toast('🗓 Confirmation of Scheduling updated');
+
   
   // Adds the deposition to the Services calendar and logs it.
   addEvent(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   addOrderToLog(previousOrderer, infoFromPreviousOrderer[0]);
   SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
+
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
   if (sendConfirmation === true) {

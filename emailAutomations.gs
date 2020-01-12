@@ -30,14 +30,37 @@ function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate,
   } else {
     var includesPip = 'No';
   };
+  
+  // Creates a PDF version of the scheduling confirmation.
+  var pdfUrl = createPDFConfirmation(orderedBy, caseStyle, date, witness, depoTime, depoLocation, services, courtReporter, videographer, pip);
 
-  // Sends a scheduling confirmation to orderer
+  // Dynamically generates HTML for the scheduling confirmation email to be sent to orderer.
+  var template = GmailApp.getDraft('r-3755280940389063773').getMessage().getBody();
+  
+  var pdf = DriveApp.getFileById(getIdFromUrl(pdfUrl));
+  var blob = pdf.getBlob().getAs('application/pdf').setName('SA Legal Solutions | Confirmation of ' + witness + ' Deposition on ' + depoDate + '.pdf');
+  
+  template = template.replace(/firstName/, firstNameOnly(orderedBy));
+  template = template.replace(/witnessName/, witness);
+  template = template.replace(/caseStyle/, caseStyle);
+  template = template.replace(/witnessName/, witness);
+  template = template.replace(/depoDate/, date);
+  template = template.replace(/depoTime/, depoTime);
+  template = template.replace(/depoLocation/, depoLocation);
+  template = template.replace(/serviceDescription/, services);
+  template = template.replace(/courtReporter/, courtReporter);
+  template = template.replace(/videographerInfo/, videographer);
+  template = template.replace(/pipInfo/, pip);
+  
+  // Sends the confirmation email.
   GmailApp.sendEmail(
     ordererEmail, 
     // Confirmation of Witness name | Doe v. Doe | Date
     'Confirmation of ' + witness + ' Deposition | ' + caseStyle + ' | ' + date, 
-    'Hello ' + firstName + ',\n\nThanks for sending this assignment to SA Legal Solutions. Our understanding of your requested resources & services are detailed below:\n• Case: ' + caseStyle + '\n• Witness: ' + witness + '\n• Date: ' + date + '\n• Time: ' + depoTime + '\n• Location: ' + depoLocation + '\n• Services: ' + services + '\n• Court reporter? ' + reporter + '\n• Videographer? ' + video + '\n• Picture-in-Picture? ' + includesPip + '\n\nIf any changes are necessary, please let us know. Thanks for your business!\n\nSA Legal Solutions | Litigation Support Specialists\nPhone: 210-591-1791\nAddress: 3201 Cherry Ridge, B 208-3, SATX 78230\nWebsite: www.salegalsolutions.com\nEmail: depos@salegalsolutions.com', 
+    'Hello ' + firstName + ',\n\nThanks for sending this assignment to SA Legal Solutions. Our understanding of your requested resources & services are detailed below:\n• Case: ' + caseStyle + '\n• Witness: ' + witness + '\n• Date: ' + date + '\n• Time: ' + depoTime + '\n• Location: ' + depoLocation + '\n• Services: ' + services + '\n• Court reporter? ' + reporter + '\n• Videographer? ' + video + '\n• Picture-in-Picture? ' + includesPip + '\n\nA PDF version of this scheduling confirmation is available for your convenience and records here: ' + pdfUrl + '\n\nIf any changes are necessary, please let us know. Thanks for your business!\n\nSA Legal Solutions | Litigation Support Specialists\nPhone: 210-591-1791\nAddress: 3201 Cherry Ridge, B 208-3, SATX 78230\nWebsite: www.salegalsolutions.com\nEmail: depos@salegalsolutions.com', 
     {
+    attachments: [blob],
+    htmlBody: template,
     name: 'SA Legal Solutions',
     bcc: 'shannonk@salegalsolutions.com'
     }
@@ -71,7 +94,7 @@ function firstNameOnly(orderer) {
 @return {pdfUrl} string URL (file hosted on Google Drive) where the confirmation PDF can be found.
 */
 
-function createPDFConfirmation (orderedBy, ordererEmail, caseStyle, depoDate, witness, depoTime, depoLocation, services, courtReporter, videographer, pip) {
+function createPDFConfirmation (orderedBy, caseStyle, depoDate, witness, depoTime, depoLocation, services, courtReporter, videographer, pip) {
   SpreadsheetApp.getActiveSpreadsheet().toast('📝 Started Creating Confirmation PDF');
   
   // setup
@@ -120,7 +143,7 @@ function createPDFConfirmation (orderedBy, ordererEmail, caseStyle, depoDate, wi
   // remove the doc version of the generated cert
   DriveApp.getFileById(getIdFromUrl(newUrl)).setTrashed(true);
   
-  Logger.log( pdfUrl)
+  return pdfUrl;
 };
 
 /** Converts the Google Doc version of confirmation to PDF and returns the URL.
@@ -152,4 +175,14 @@ function moveFile(sourceFileId, targetFolderId) {
 function getIdFromUrl(url) { 
   return url.match(/[-\w]{25,}/); 
 };
+
+/** Displays list of draft ids in depos@salegalsolutions.com mailbox. */
+function seeDrafts () {
+  var drafts = GmailApp.getDrafts();
+  drafts.forEach(function(draft) {
+    var id = draft.getId();
+    Logger.log(id);
+  });
+};
+
 

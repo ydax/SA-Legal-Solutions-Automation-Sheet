@@ -24,7 +24,7 @@ function onOpen (e) {
   var userEmail = Session.getActiveUser().getEmail();
   var ui = SpreadsheetApp.getUi();
   
-//  if (userEmail === 'depos@salegalsolutions.com') {
+  if (userEmail === 'depos@salegalsolutions.com') {
     ui.createMenu("⚖️ SA Legal Services")
     .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
                 .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
@@ -34,12 +34,11 @@ function onOpen (e) {
                 .addItem("👤 By Witness", "searchByWitness")
                 .addItem("⚖️ By Case", "searchByCase"))
     .addToUi();
-/*  } else {
+  } else {
     ui.createMenu("⚖️ SA Legal Services")
     .addItem('⚠️ Automation Menu Only Available When Logged In With depos@salegalsolutions.com', 'checkLogin')
     .addToUi();
   }; 
-  */
 };
 
 // create the new orderer deposition sidebar
@@ -88,7 +87,8 @@ X • On deposition Cancel in the Schedule a depo Sheet: remove Calendar event f
 X • Enable date changes from Schedule a depo Sheet to reflect on the Current List as well
 X • On date and time changes made to the Schedule a depo Sheet, auto-populate the worksheets again
 X • If the logged in user isn’t depos@salegalsolutions.com, remove the automation options
-• Add templated pdf to be sent with new deposition confirmations
+X • Add templated pdf to be sent with new deposition confirmations
+X • Enable HTML editing of confirmation email template
 
 
 --- Version 1.0, Started on Friday, December 20th 2019 ---
