@@ -65,3 +65,91 @@ function firstNameOnly(orderer) {
   var firstName = orderer.match(/\S+/)[0];
   return firstName;
 };
+
+/** Generates a deposition confirmation PDF to include in confirmation email
+@params {multiple} strings Deposition information that will be included in the confirmation email.
+@return {pdfUrl} string URL (file hosted on Google Drive) where the confirmation PDF can be found.
+*/
+
+function createPDFConfirmation (orderedBy, ordererEmail, caseStyle, depoDate, witness, depoTime, depoLocation, services, courtReporter, videographer, pip) {
+  SpreadsheetApp.getActiveSpreadsheet().toast('📝 Started Creating Confirmation PDF');
+  
+  // setup
+  var template = DocumentApp.openByUrl('https://docs.google.com/document/d/1hOhzKWj2l49toceMLSlMkxL4y9qp0hc5m6Rm43DgbVE/edit');
+  var templateId = '1hOhzKWj2l49toceMLSlMkxL4y9qp0hc5m6Rm43DgbVE';
+  var automatedConfirmationsFolderId = '1nC2FQXyiEt5SIJQC-S2JF37kfFtHtK3f';
+  
+  // Generates the Google Doc version of the confirmation PDF.
+  var certFileName = 'SA Legal Solutions | Confirmation of ' + witness + ' Deposition on ' + depoDate ;
+  var folder = DriveApp.getFolderById(automatedConfirmationsFolderId);
+  var generatedDocCertUrl = DriveApp.getFileById(templateId).makeCopy(certFileName, folder).getUrl();
+  
+  // Generates the URL of the newly-generated Google Docs version of the confirmation PDF (without copying the template fresh).
+  var newUrl = '';
+  var files = DriveApp.getFilesByName(certFileName);
+  while (files.hasNext()) {
+    var file = files.next();
+    newUrl = file.getUrl();
+  }
+  SpreadsheetApp.getActiveSpreadsheet().toast('✔️ New Confirmation PDF Template Created 📝');
+  
+  // Adds deposition information to template.  
+  var confirmationBody = DocumentApp.openByUrl(newUrl).getBody();
+  
+  confirmationBody.replaceText('firstName', firstNameOnly(orderedBy));
+  confirmationBody.replaceText('witnessName', witness);
+  confirmationBody.replaceText('caseStyle', caseStyle);
+  confirmationBody.replaceText('witnessName', witness);
+  confirmationBody.replaceText('depoDate', depoDate);
+  confirmationBody.replaceText('depoTime', depoTime);
+  confirmationBody.replaceText('depoLocation', depoLocation);
+  confirmationBody.replaceText('serviceDescription', services);
+  confirmationBody.replaceText('courtReporter', courtReporter);
+  confirmationBody.replaceText('videographerInfo', videographer);
+  confirmationBody.replaceText('pipInfo', pip);
+  
+  DocumentApp.openByUrl(newUrl).saveAndClose();
+  
+  // Converts the Google Doc version to PDF and updates sharing settings.
+  var pdfUrl = convertToPDF(newUrl).slice(0, -13);
+  var pdfId = getIdFromUrl(pdfUrl);
+  moveFile(pdfId, automatedConfirmationsFolderId);
+  folder.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.VIEW);
+  SpreadsheetApp.getActiveSpreadsheet().toast('✅ Confirmation PDF Creation Successful');
+  
+  // remove the doc version of the generated cert
+  DriveApp.getFileById(getIdFromUrl(newUrl)).setTrashed(true);
+  
+  Logger.log( pdfUrl)
+};
+
+/** Converts the Google Doc version of confirmation to PDF and returns the URL.
+@param {newUrl} string Google Doc URL of newly-created confirmation.
+@return {pdfUrl} URL (Google Drive link) of dynamically-generated deposition confirmation PDF.
+*/
+function convertToPDF(newUrl) {
+  var docVersionOfPdf = DocumentApp.openByUrl(newUrl);
+  var docblob = docVersionOfPdf.getAs('application/pdf');
+  /* Add the PDF extension */
+  docblob.setName(docVersionOfPdf.getName() + ".pdf");
+  var pdfVersion = DriveApp.createFile(docblob);
+  var pdfVersionURL = pdfVersion.getUrl();
+  return pdfVersionURL;
+}
+
+/** Moves a file in in the depos Google Drive.
+@params {sourceFileId, targetFolderId} strings Google Drive file and folder ids.
+*/
+function moveFile(sourceFileId, targetFolderId) {
+  var file = DriveApp.getFileById(sourceFileId);
+  file.getParents().next().removeFile(file);
+  DriveApp.getFolderById(targetFolderId).addFile(file);
+}
+
+/** Gets a file ID from a Google Drive file URL.
+@return string The ID of a Google Drive file, extracted from the URL.
+*/
+function getIdFromUrl(url) { 
+  return url.match(/[-\w]{25,}/); 
+};
+

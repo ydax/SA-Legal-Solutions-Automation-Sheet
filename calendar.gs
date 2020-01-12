@@ -70,11 +70,13 @@ function manuallyUpdateCalendar(e) {
       // Routing if it was made to event date. 2 because Date is in Column B.
       case (2):
         editDepoDate(e, ss, SACal, depoSheet, editColumn, editRow);
+        updateSheetsOnTimeOrDateEdit(editRow);
         break;
         
       // Routing the edit if it was made to the event time. 7 because Start Time is in Column G.
       case (7):
         editDepoTime(e, ss, SACal, depoSheet, editColumn, editRow);
+        updateSheetsOnTimeOrDateEdit(editRow)
         break;
       
       // Routing if the edit is made to Columns recorded in Calendar events.

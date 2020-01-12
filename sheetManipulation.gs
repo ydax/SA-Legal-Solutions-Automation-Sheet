@@ -39,7 +39,7 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   SpreadsheetApp.getActiveSpreadsheet().toast('🟢 Depo added to Current List sheet');
   
   // Adds deposition information to Video Worksheet
-  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail);
+  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, videographer, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail);
   SpreadsheetApp.getActiveSpreadsheet().toast('🎥 Video Worksheet updated');
   
   // Adds deposition information to CR Worksheet
@@ -129,7 +129,7 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   SpreadsheetApp.getActiveSpreadsheet().toast('🟢 Depo added to Current List sheet');
   
   // Adds deposition information to Video Worksheet
-  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[8], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], previousOrderer, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail);
+  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, videographer, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[8], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], previousOrderer, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail);
   SpreadsheetApp.getActiveSpreadsheet().toast('🎥 Video Worksheet updated');
   
   // Adds deposition information to CR Worksheet
@@ -274,7 +274,7 @@ function updateCurrentList (depoDate, witnessName, firm, city, courtReporter, vi
 /** Updates the Video Worksheet with the most recently-entered deposition information.
 @params {depositionInformation} strings Deposition information received from the sidebar.
 */
-function updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail) {
+function updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, videographer, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail) {
   var videoSheet = SpreadsheetApp.getActive().getSheetByName('Video Worksheet');
   
   // Sets values inside video worksheet.
@@ -289,6 +289,7 @@ function updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, 
   videoSheet.getRange('F10').setValue(witnessName);
   videoSheet.getRange('D1').setValue(witnessName);
   videoSheet.getRange('F11').setValue(caseStyle);
+  videoSheet.getRange('F13').setValue(videographer);
   videoSheet.getRange('F14').setValue(depoTime);
   videoSheet.getRange('B13').setValue(courtReporter);
   videoSheet.getRange('B22').setValue(firm);
@@ -386,8 +387,54 @@ function updateConfirmationOfScheduling(locationFirm, locationAddress1, location
   confSheet.getRange('D28').setValue(pip);
 };
 
-/** Updates Video Worksheet, CR Worksheet, and Confirmation of Scheduling on manual time or date edit to Schedule a depo Sheet. */
-
+/** Updates Video Worksheet, CR Worksheet, and Confirmation of Scheduling on manual time or date edit to Schedule a depo Sheet.
+@param {editRow} number The row where a user has just edited the time or date of a depo in the Schedule a depo Sheet.
+*/
+function updateSheetsOnTimeOrDateEdit(editRow) {
+  editRow = 2;
+  var ss = SpreadsheetApp.getActive();
+  var scheduleSheet = ss.getSheetByName('Schedule a depo');
+  
+  // Structures data from row user has just edited.
+  var locationFirm = scheduleSheet.getRange(editRow, 17).getValue();
+  var locationAddress1 = scheduleSheet.getRange(editRow, 18).getValue();
+  var locationAddress2 = scheduleSheet.getRange(editRow, 19).getValue();
+  var locationCity = scheduleSheet.getRange(editRow, 20).getValue();
+  var locationState = scheduleSheet.getRange(editRow, 21).getValue();
+  var locationZip = scheduleSheet.getRange(editRow, 22).getValue();
+  var depoDate = scheduleSheet.getRange(editRow, 2).getValue();
+  var witnessName = scheduleSheet.getRange(editRow, 3).getValue();
+  var caseStyle = scheduleSheet.getRange(editRow, 6).getValue();
+  var depoTime = scheduleSheet.getRange(editRow, 7).getValue();
+  var orderedBy = scheduleSheet.getRange(editRow, 4).getValue();
+  var firm = scheduleSheet.getRange(editRow, 8).getValue();
+  var attorneyEmail = scheduleSheet.getRange(editRow, 16).getValue();
+  var firmAddress1 = scheduleSheet.getRange(editRow, 10).getValue();
+  var firmAddress2 = scheduleSheet.getRange(editRow, 11).getValue();
+  var city = scheduleSheet.getRange(editRow, 12).getValue();
+  var state = scheduleSheet.getRange(editRow, 13).getValue();
+  var zip = scheduleSheet.getRange(editRow, 14).getValue();
+  var attorneyPhone = scheduleSheet.getRange(editRow, 15).getValue();
+  var attorney = scheduleSheet.getRange(editRow, 9).getValue();
+  var services = scheduleSheet.getRange(editRow, 24).getValue();
+  var courtReporter = scheduleSheet.getRange(editRow, 25).getValue();
+  var videographer = scheduleSheet.getRange(editRow, 26).getValue();
+  var pip = scheduleSheet.getRange(editRow, 27).getValue();
+  var copyAttorney = scheduleSheet.getRange(editRow, 28).getValue();
+  var copyFirm = scheduleSheet.getRange(editRow, 29).getValue();
+  var copyAddress1 = scheduleSheet.getRange(editRow, 30).getValue();
+  var copyAddress2 = scheduleSheet.getRange(editRow, 31).getValue();
+  var copyCity = scheduleSheet.getRange(editRow, 32).getValue();
+  var copyState = scheduleSheet.getRange(editRow, 33).getValue();
+  var copyZip = scheduleSheet.getRange(editRow, 34).getValue();
+  var copyEmail = scheduleSheet.getRange(editRow, 36).getValue();
+  var copyPhone = scheduleSheet.getRange(editRow, 35).getValue();
+    
+  updateCRWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail, copyPhone);
+  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, videographer, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail);
+  updateConfirmationOfScheduling(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy, videographer, pip);
+  ss.toast('📚 All worksheets updated with new information');
+};
 
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// UTILITIES /////////////////////////////////////

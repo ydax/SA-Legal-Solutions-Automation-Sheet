@@ -8,6 +8,9 @@
   Cell Background  #ffebee red lighten-5
   Confirmation     #00796b teal darken-2
   Error            #e65100 orange darken-4
+  Primary -1       #e53935 red darken-1
+  Primary -2       #e57373 red lighten-2
+  Primary +1       #b71c1c red darken-4
 */
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +86,9 @@ X • Add the internal record-keeping fields on the CR Worksheet and Video Works
 X • On the addition of a new deposition, automatically populate Columns A:K on the Current List Sheet and set Status (Column A) to Current. Reduce Status options to "Current" and "Cancelled" only.
 X • On deposition Cancel in the Schedule a depo Sheet: remove Calendar event from Services, add CANCELED in front of the title, and add it to the Cancelled Calendar, and remove it from the Current List Sheet
 X • Enable date changes from Schedule a depo Sheet to reflect on the Current List as well
-• On date and time changes made to the Schedule a depo Sheet, auto-populate the worksheets again
+X • On date and time changes made to the Schedule a depo Sheet, auto-populate the worksheets again
 X • If the logged in user isn’t depos@salegalsolutions.com, remove the automation options
+• Add templated pdf to be sent with new deposition confirmations
 
 
 --- Version 1.0, Started on Friday, December 20th 2019 ---
