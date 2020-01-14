@@ -10,26 +10,36 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
   var ss = SpreadsheetApp.getActive();
   var depoSheet = ss.getSheetByName('Schedule a depo');
   
-  // Create event title and description
-  var title = '(' + services + ')' + ' ' + firm + ' - ' + witnessName;
-  var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
-  var depoLocation = locationFirm + ', ' + locationAddress1 + ' ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
-  var description = 'Witness Name: ' + witnessName + '\nCase Style: ' + caseStyle + '\nOrdered by: ' + orderedBy + '\n\nCSR: ' +courtReporter + '\nVideographer: ' + videographer + '\nPIP: ' + pip + '\n\nLocation: ' + '\n' + depoLocation + '\n\nOur client:\n' + attorney + '\n' + firm + '\n' + firmAddress1 + ' ' + firmAddress2 + '\n' + city + ' ' + state + ' ' + zip;
-
-  // Add the deposition event to the Services calendar
-  var formattedDate = toStringDate(depoDate);
-  var formattedHours = to24Format(depoHour, depoMinute, amPm);
-  var formattedDateAndHour = formattedDate + ' ' + formattedHours;
-  
-  var event = SACal.createEvent(title, 
-    new Date(formattedDateAndHour),
-    new Date(formattedDateAndHour),{
-      description: description,
-      location: depoLocation
-    });
-  
-  // Add eventId to the Schedule a depo Sheet.
-  depoSheet.getRange(2, 37).setValue(event.getId());
+  try {
+    // Create event title and description
+    var title = '(' + services + ')' + ' ' + firm + ' - ' + witnessName;
+    var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
+    var depoLocation = locationFirm + ', ' + locationAddress1 + ' ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
+    var description = 'Witness Name: ' + witnessName + '\nCase Style: ' + caseStyle + '\nOrdered by: ' + orderedBy + '\n\nCSR: ' +courtReporter + '\nVideographer: ' + videographer + '\nPIP: ' + pip + '\n\nLocation: ' + '\n' + depoLocation + '\n\nOur client:\n' + attorney + '\n' + firm + '\n' + firmAddress1 + ' ' + firmAddress2 + '\n' + city + ' ' + state + ' ' + zip;
+    
+    // Add the deposition event to the Services calendar
+    var formattedDate = toStringDate(depoDate);
+    var formattedHours = to24Format(depoHour, depoMinute, amPm);
+    var formattedDateAndHour = formattedDate + ' ' + formattedHours;
+    Logger.log(formattedDate);
+    Logger.log(formattedDateAndHour);
+    
+    var event = SACal.createEvent(title, 
+                                  new Date(formattedDateAndHour),
+                                  new Date(formattedDateAndHour),{
+                                    description: description,
+                                    location: depoLocation
+                                  });
+    
+    // Add eventId to the Schedule a depo Sheet.
+    Logger.log(event.getId());
+    depoSheet.getRange(2, 37).setValue(event.getId());
+    SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
+  } catch (error) {
+    Logger.log(error);
+    addToDevLog(error);
+    SpreadsheetApp.getActiveSpreadsheet().toast('⚠️ Error adding event to Services calendar. Error logged.');
+  };
 };
 
 /** Checks for manual edits to deposition times / dates, updates the calendar event if necessary
@@ -76,7 +86,6 @@ function manuallyUpdateCalendar(e) {
       // Routing the edit if it was made to the event time. 7 because Start Time is in Column G.
       case (7):
         editDepoTime(e, ss, SACal, depoSheet, editColumn, editRow);
-        updateSheetsOnTimeOrDateEdit(editRow)
         break;
       
       // Routing if the edit is made to Columns recorded in Calendar events.
@@ -141,6 +150,10 @@ function editDepoDate(e, ss, SACal, depoSheet, editColumn, editRow) {
     // Add new eventId to the Schedule a depo Sheet.
     depoSheet.getRange(editRow, 37).setValue(event.getId());
     ss.toast('✅ Services Calendar Updated Successfully');
+    
+    // Updates worksheets.
+    updateSheetsOnTimeOrDateEdit(editRow)
+    
   } catch (error) {
     SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition date you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
     addToDevLog('In event date onEdit function: ' + error);
@@ -331,7 +344,7 @@ function modifyDepoDateInCurrentList(e, newDate, editRow) {
 */
 function to24Format (depoHour, depoMinute, amPm) {
   var hour = parseInt(depoHour, 10);
-  if (amPm === 'PM') {
+  if (amPm === 'PM' && hour !== 12) {
     hour += 12;
   };
   var formattedTime = hour + ':' + depoMinute + ':00 CST';

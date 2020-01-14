@@ -21,24 +21,17 @@
 @param {e} object Sheet load event object.
 */
 function onOpen (e) {
-  var userEmail = Session.getActiveUser().getEmail();
   var ui = SpreadsheetApp.getUi();
   
-  if (userEmail === 'depos@salegalsolutions.com') {
-    ui.createMenu("⚖️ SA Legal Services")
-    .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
-                .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
-                .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu("🔎 Search")
-                .addItem("📅 By Date", "searchByDate")
-                .addItem("👤 By Witness", "searchByWitness")
-                .addItem("⚖️ By Case", "searchByCase"))
-    .addToUi();
-  } else {
-    ui.createMenu("⚖️ SA Legal Services")
-    .addItem('⚠️ Automation Menu Only Available When Logged In With depos@salegalsolutions.com', 'checkLogin')
-    .addToUi();
-  }; 
+  ui.createMenu("⚖️ SA Legal Services")
+  .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
+              .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
+              .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
+  .addSubMenu(SpreadsheetApp.getUi().createMenu("🔎 Search")
+              .addItem("📅 By Date", "searchByDate")
+              .addItem("👤 By Witness", "searchByWitness")
+              .addItem("⚖️ By Case", "searchByCase"))
+  .addToUi();
 };
 
 // create the new orderer deposition sidebar

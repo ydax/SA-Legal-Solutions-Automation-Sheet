@@ -53,7 +53,6 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   // Adds the deposition to the Services calendar and logs it for internal record keeping.
   var event = addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   addOrderToLog(orderedBy, firm);
-  SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
   if (sendConfirmation === true) {
@@ -143,8 +142,6 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   // Adds the deposition to the Services calendar and logs it.
   addEvent(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
   addOrderToLog(previousOrderer, infoFromPreviousOrderer[0]);
-  SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
-
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
   if (sendConfirmation === true) {

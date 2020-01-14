@@ -78,7 +78,11 @@ function sendOrderActivityReport() {
     
     var date = toStringDate(new Date().toISOString());
     
-    GmailApp.sendEmail('davis@eazl.co', 'Order Activity Report for Week Prior to ' + date, reportText, { name: 'SALS Reporting Bot'});
+    // Sends the email to Blake.
+    GmailApp.sendEmail('bboyd@salegalsolutions.com', 'Order Activity Report for Week Prior to ' + date, reportText, { name: 'SALS Reporting Bot'});
+    
+    // Resets the Script Properties.
+    deleteScriptProps();
     
   } catch (error) {
     addToDevLog('Error inside sendOrderActivityReport: ' + error);
@@ -160,6 +164,15 @@ function seeScriptPropsValues() {
   var keys = PropertiesService.getScriptProperties().getKeys();
   keys.forEach(function(key) {
     var value = PropertiesService.getScriptProperties().getProperty(key);
+    Logger.log(value);
+  });
+};
+
+/** Provides visibility into Document Properties values (where dev logs are). */
+function seeDevLogs() {
+  var keys = PropertiesService.getDocumentProperties().getKeys();
+  keys.forEach(function(key) {
+    var value = PropertiesService.getDocumentProperties().getProperty(key);
     Logger.log(value);
   });
 };
