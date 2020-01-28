@@ -225,6 +225,68 @@ function cancelDepo (eventId, editRow) {
 ///////////////////////////// SHEET UPDATE FUNCTIONS ///////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
+/** Updates all three worksheets based on highlighted row.
+* Note: Triggered from menu item in UI.
+*/
+function updateWorksheetsByRow () {
+  var ss = SpreadsheetApp.getActive();
+  var currentSheet = ss.getSheetName();
+  var deposSheet = ss.getSheetByName(currentSheet);
+  var currentRow = ss.getActiveRange().getRow();
+  
+  /** Alerts user that they need to be in the "Schedule a depos" Sheet to perform this action, if needed. */
+  if (currentSheet !== "Schedule a depo") {
+    ss.toast("⚠️ This action can only be performed from the \"Schedule a depos\" Sheet.");
+    return;
+  };
+  
+  /** Gets data for worksheet updates from row and stores them in variables. */
+  SpreadsheetApp.getActiveSpreadsheet().toast('💽 Gathering information');
+  var rowData = deposSheet.getRange(currentRow, 2, 1, deposSheet.getLastColumn()).getValues()[0];
+
+  var depoDate = rowData[0];
+  var witnessName = rowData[1];
+  var orderedBy = rowData[2];
+  var caseStyle = rowData[4];
+  var depoTime = rowData[5];
+  var firm = rowData[6];
+  var attorney = rowData[7];
+  var firmAddress1 = rowData[8];
+  var firmAddress2 = rowData[9];
+  var city = rowData[10];
+  var state = rowData[11];
+  var zip = rowData[12];
+  var attorneyPhone = rowData[13];
+  var attorneyEmail = rowData[14];
+  var locationFirm = rowData[15];
+  var locationAddress1 = rowData[16];
+  var locationAddress2 = rowData[17];
+  var locationCity = rowData[18];
+  var locationState = rowData[19];
+  var locationZip = rowData[20];
+  var services = rowData[22];
+  var courtReporter = rowData[23];
+  var videographer = rowData[24];
+  var pip = rowData[25];
+  var copyAttorney = rowData[26];
+  var copyFirm = rowData[27];
+  var copyAddress1 = rowData[28];
+  var copyAddress2 = rowData[29];
+  var copyCity = rowData[30];
+  var copyState = rowData[31];
+  var copyZip = rowData[32];
+  var copyPhone = rowData[33];
+  var copyEmail = rowData[34];
+  
+  // 📋
+  /** Prints to Worksheets and alerts users with progress updates via Toasts. */
+  SpreadsheetApp.getActiveSpreadsheet().toast('📋 Pasting deposition information to Worksheets');
+  updateVideoWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, videographer, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail);
+  updateCRWorksheet(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, attorneyEmail, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy, services, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyEmail, copyPhone);
+  updateConfirmationOfScheduling(locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, depoDate, witnessName, caseStyle, depoTime, courtReporter, firm, attorney, firmAddress1, firmAddress2, city, state, zip, attorneyPhone, orderedBy, videographer, pip);
+  SpreadsheetApp.getActiveSpreadsheet().toast('✅ Worksheets updated successfully');
+};
+
 /** Updates the Current List on addition of a new deposition.
 @params {depositionInformation} strings Deposition information received from the sidebar.
 */

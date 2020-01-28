@@ -4,7 +4,7 @@
 
 /** Logs order behavior.
 @param {orderer} string The orderer of a deposition.
-@param {firm} string The firm the ordere works for.
+@param {firm} string The firm the orderer works for.
 */
 function addOrderToLog(orderer, firm) {
   var scriptProps = PropertiesService.getScriptProperties();
@@ -194,3 +194,19 @@ function setDummyScriptPropsData() {
   props.setProperty('#K#2020-04-07T10:54:02.589Z', '#O#Jimi Hendrix#F#Jones Day Legal#C#1');
   props.setProperty('#K#2020-04-07T11:54:02.589Z', '#O#John Medeski#F#San Antonio Law LLC#C#1');
 };
+
+/** Manually adds a script prop for Blake's report. */
+function manuallyAddScriptProp() {
+  addOrderToLog('Millennium Video', 'Lopez Law Goup PLLC');
+};
+
+
+
+
+
+
+
+
+
+
+

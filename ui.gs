@@ -31,6 +31,7 @@ function onOpen (e) {
               .addItem("📅 By Date", "searchByDate")
               .addItem("👤 By Witness", "searchByWitness")
               .addItem("⚖️ By Case", "searchByCase"))
+  .addItem("📋 Update Worksheets", "updateWorksheetsByRow")
   .addToUi();
 };
 
@@ -119,4 +120,37 @@ NOTES
 - Blake Email (once per week)
    - Count of who schedules Ordered By + Firm Name
    - Total of how many depos were scheduled for the week
+
+
+--- Version 1.1, Started on Tuesday, January 28th 2020 ---
+REQUIREMENTS:
+1. Add feature that enables user to select a row, then force populate the worksheets
+2. Add dropdown to sidebars where previous copy attorneys can be selected
+3. Enable mirroring of date, location, services, and time from Schedule a depo to Current List tabs on update by users
+4. Add a dropdown to sidebars with previous locations
+5. Hunt and remove bug causing Blake to get an extra report on Saturday
+
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
