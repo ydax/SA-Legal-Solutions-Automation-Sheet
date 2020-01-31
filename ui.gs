@@ -48,13 +48,14 @@ function initiateRepeatOrdererModal() {
     .setWidth(350)
     .setHeight(105);
   SpreadsheetApp.getUi() 
-    .showModalDialog(html, '👥 Getting previous orderers...');
+    .showModalDialog(html, 'Gathering information...');
 };
 
 // create the repeat orderer sidebar
 function launchRepeatOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('repeatOrderer');
   template.orderers = getPreviousOrderers();
+  template.copyAttys = getCopyAttorneys();
   var html = template.evaluate().setTitle('🔁 New Deposition from a Repeat Orderer');
   SpreadsheetApp.getUi().showSidebar(html);
 };

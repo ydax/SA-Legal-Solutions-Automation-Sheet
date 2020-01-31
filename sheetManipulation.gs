@@ -236,7 +236,7 @@ function updateWorksheetsByRow () {
   
   /** Alerts user that they need to be in the "Schedule a depos" Sheet to perform this action, if needed. */
   if (currentSheet !== "Schedule a depo") {
-    ss.toast("⚠️ This action can only be performed from the \"Schedule a depos\" Sheet.");
+    ss.toast("⚠️ This action can only be performed from the \"Schedule a depo\" Sheet.");
     return;
   };
   
@@ -595,10 +595,52 @@ function emailFromOrderer (orderer) {
   return ordererEmail;
 };
 
+/** Returns an array of copy attorney arrays.
+* @return {copyAttys} Array of arrays of copy attorneys with each array structured like this: 
+* [Copy Atty, Copy Firm, Firm Address 1, Firm Address 2, City, State, Zip Phone, Email]
+*/
+function getCopyAttorneys () {
+  var ss = SpreadsheetApp.getActive();
+  var deposSheet = ss.getSheetByName('Schedule a depo');
+  var rawCopyAttys = deposSheet.getRange(2, 28, deposSheet.getLastRow(), 9).getValues();
+  
+  /** Removes all arrays that have an empty string for the copy attorney's name. */
+  for (var i = 0; i < rawCopyAttys.length; i++) {
+    if (rawCopyAttys[i][0] === '') {
+      rawCopyAttys.pop(rawCopyAttys[i]);
+    };
+  };
+  
+  /** Sorts the array of copy attorney arrays alphabetically by name. */
+  var sortedCopyAttys = rawCopyAttys.sort(function(a, b) {
+
+    var nameA = a[0];
+    var nameB = b[0];
+    
+    if (nameA < nameB) {
+      return -1;
+    };
+    if (nameA > nameB) {
+      return 1;
+    };
+    
+    return 0;
+  });
+  
+  /** Removes duplicates from array of arrays. */
+  for (var i = 0; i < sortedCopyAttys.length; i++) {
+    if (i !== 0) {
+      var previousName = sortedCopyAttys[i -1][0];
+      var name = sortedCopyAttys[i][0];
+      if (previousName === name) {
+        sortedCopyAttys.splice(i, 1);
+      };
+    };
+  };
 
 
-
-
+  return sortedCopyAttys;
+};
 
 
 

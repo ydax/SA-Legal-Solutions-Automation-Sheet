@@ -11,7 +11,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Closes the MSpreadsheet's modal when data is pulled -->
     <script>google.script.host.closeDialog()</script>
+    <!-- Selects the form and handles submission events, passing data to Apps Script. -->
     <script>
         $(document).ready(function(){
         $('select').formSelect();
@@ -194,10 +196,23 @@
                 </div>
             </div>
             <!-- Copy Attorney Information -->
+            <hr class="divider red darken-3">
             <div class="row">
-                <hr class="divider red darken-3">
                 <p class="flow-text grey-text">Copy Attorney Information</p>
-                <blockquote>Leave section blank if no copy attorney.</blockquote>
+                <blockquote>
+                    Leave section blank if no copy attorney.<br>
+                    ⬇️ Select from dropdown to autofill previous copy attorney.
+                </blockquote>
+                <div class="row">
+                    <div class="input-field col s12">
+                    <select class="prevCopyAtty" name="prevCopyAtty" id="prevCopyAtty">
+                    <option value="" disabled selected>Select Copy Attorney</option>
+                        <? for (var i = 0; i < copyAttys.length; i++) { ?>
+                            <option value="<?= i; ?>"><?= copyAttys[i][0]; ?></option>
+                        <? } ?>
+                    </select>
+              </div>
+            </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">content_copy</i>
@@ -275,5 +290,12 @@
             </div>
         </div>
     </form>
+    
+    <!-- Populates copy attorney information on user selection. -->
+    <script>
+    $( ".prevCopyAtty" ).change(function() {
+       alert( "Handler for .change() called." );
+    });
+    </script>
 </body>
 </html>
