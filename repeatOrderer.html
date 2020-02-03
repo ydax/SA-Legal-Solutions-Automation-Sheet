@@ -11,8 +11,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Closes the MSpreadsheet's modal when data is pulled -->
-    <script>google.script.host.closeDialog()</script>
     <!-- Selects the form and handles submission events, passing data to Apps Script. -->
     <script>
         $(document).ready(function(){
@@ -217,29 +215,29 @@
                     <div class="input-field col s12">
                         <i class="material-icons prefix">content_copy</i>
                         <input type="text" id="copyAttorney" name="copyAttorney">
-                        <label for="copyAttorney">Copy Attorney</label>
                     </div>
+                        <label class="right" for="copyAttorney">Copy Attorney</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">content_copy</i>
                         <input type="text" id="copyFirm" name="copyFirm">
-                        <label for="copyFirm">Copy Firm</label>
                     </div>
+                        <label class="right" for="copyFirm">Copy Firm</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">content_copy</i>
                         <input type="text" id="copyAddress1" name="copyAddress1">
-                        <label for="copyAddress1">Copy Firm Address 1</label>
                     </div>
+                        <label class="right" for="copyAddress1">Copy Firm Address 1</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">content_copy</i>
                         <input type="text" id="copyAddress2" name="copyAddress2">
-                        <label for="copyAddress2">Copy Firm Address 2</label>
                     </div>
+                        <label class="right" for="copyAddress2">Copy Firm Address 2</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s6">
@@ -259,15 +257,15 @@
                     <div class="input-field col s12">
                         <i class="material-icons prefix">content_copy</i>
                         <input type="text" id="copyPhone" name="copyPhone">
-                        <label for="copyPhone">Copy Attorney Phone</label>
                     </div>
+                        <label class="right" for="copyPhone">Copy Attorney Phone</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">content_copy</i>
                         <input type="email" class="validate" id="copyEmail" name="copyEmail">
-                        <label for="copyEmail">Copy Attorney Email</label>
                     </div>
+                        <label class="right" for="copyEmail">Copy Attorney Email</label>
                 </div>
             </div>
             <!-- Confirmation Email Option -->
@@ -290,11 +288,80 @@
             </div>
         </div>
     </form>
+
+    <!-- Dynamically prints copy attorney names and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-names" style='display:none;'><?= copyAttys[i][0]; ?></div>
+    <? } ?>
+
+    <!-- Dynamically prints copy attorney firms and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-firms" style='display:none;'><?= copyAttys[i][1]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints copy attorney firm address (1) and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-firm-addresses-1" style='display:none;'><?= copyAttys[i][2]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints copy attorney firm address (2) and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-firm-addresses-2" style='display:none;'><?= copyAttys[i][3]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints copy attorney cities and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-cities" style='display:none;'><?= copyAttys[i][4]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints copy attorney states and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-states" style='display:none;'><?= copyAttys[i][5]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints copy attorney zip codes and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-zips" style='display:none;'><?= copyAttys[i][6]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints copy attorney phone numbers and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-phones" style='display:none;'><?= copyAttys[i][7]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints copy attorney email addresses and hides them. -->
+    <? for (var i = 0; i < copyAttys.length; i++) { ?>
+      <div class="copy-emails" style='display:none;'><?= copyAttys[i][8]; ?></div>
+    <? } ?>
     
     <!-- Populates copy attorney information on user selection. -->
     <script>
-    $( ".prevCopyAtty" ).change(function() {
-       alert( "Handler for .change() called." );
+    // Zip Phone, Email
+    $(".prevCopyAtty").change(function() {
+      /** Gets index of user selection in the copy attorneys array. */
+      var selection = $('.prevCopyAtty').val();
+      
+      /** Gathers arrays of copy attorney array elements. */
+      var names = $(".copy-names").get();
+      var firms = $(".copy-firms").get();
+      var firmAddresses1 = $(".copy-firm-addresses-1").get();
+      var firmAddresses2 = $(".copy-firm-addresses-2").get();
+      var copyCities = $(".copy-cities").get();
+      var copyStates = $(".copy-states").get();
+      var copyZips = $(".copy-zips").get();
+      var copyPhones = $(".copy-phones").get();
+      var copyEmails = $(".copy-emails").get();
+      
+      /** Sets values of form fields based on index user has selected. */
+      $('#copyAttorney').val(names[selection].innerHTML);
+      $('#copyFirm').val(firms[selection].innerHTML);
+      $('#copyAddress1').val(firmAddresses1[selection].innerHTML);
+      $('#copyAddress2').val(firmAddresses2[selection].innerHTML);
+      $('#copyCity').val(copyCities[selection].innerHTML);
+      $('#copyState').val(copyStates[selection].innerHTML);
+      $('#copyZip').val(copyZips[selection].innerHTML);
+      $('#copyPhone').val(copyPhones[selection].innerHTML);
+      $('#copyEmail').val(copyEmails[selection].innerHTML);
     });
     </script>
 </body>

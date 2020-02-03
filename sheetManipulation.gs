@@ -606,8 +606,8 @@ function getCopyAttorneys () {
   
   /** Removes all arrays that have an empty string for the copy attorney's name. */
   for (var i = 0; i < rawCopyAttys.length; i++) {
-    if (rawCopyAttys[i][0] === '') {
-      rawCopyAttys.pop(rawCopyAttys[i]);
+    if (rawCopyAttys[i][0] == '') {
+      rawCopyAttys.splice(i, 1);
     };
   };
   
@@ -632,15 +632,30 @@ function getCopyAttorneys () {
     if (i !== 0) {
       var previousName = sortedCopyAttys[i -1][0];
       var name = sortedCopyAttys[i][0];
-      if (previousName === name) {
+      if (previousName == name) {
         sortedCopyAttys.splice(i, 1);
       };
     };
   };
-
+  
+  /** Removes any empty arrays at the beginning of array of arrays. */
+  while(sortedCopyAttys[0][0] == '') {
+    sortedCopyAttys.splice(0, 1);
+  };
 
   return sortedCopyAttys;
 };
+
+
+
+
+
+
+
+
+
+
+
 
 
 

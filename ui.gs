@@ -26,7 +26,7 @@ function onOpen (e) {
   ui.createMenu("⚖️ SA Legal Services")
   .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
               .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
-              .addItem("🆕 New Orderer", "showNewOrdererSidebar"))
+              .addItem("🆕 New Orderer", "initiateNewOrdererModal"))
   .addSubMenu(SpreadsheetApp.getUi().createMenu("🔎 Search")
               .addItem("📅 By Date", "searchByDate")
               .addItem("👤 By Witness", "searchByWitness")
@@ -35,23 +35,33 @@ function onOpen (e) {
   .addToUi();
 };
 
-// create the new orderer deposition sidebar
-function showNewOrdererSidebar() {
+// Launches the new orderer sidebar (triggered from modal).
+function launchNewOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('newOrderer');
+  template.copyAttys = getCopyAttorneys();
   var html = template.evaluate().setTitle('🆕 New Deposition from a New Orderer');
   SpreadsheetApp.getUi().showSidebar(html);
 };
 
-// initiate the repeat orderer modal
+// Launches the new orderer deposition modal.
+function initiateNewOrdererModal() {
+  var html = HtmlService.createHtmlOutputFromFile('newOrdererM')
+    .setWidth(350)
+    .setHeight(105);
+  SpreadsheetApp.getUi() 
+    .showModalDialog(html, '👥 Getting previous orderers...');
+};
+
+// Initiates the repeat orderer modal.
 function initiateRepeatOrdererModal() {
   var html = HtmlService.createHtmlOutputFromFile('repeatOrdererM')
     .setWidth(350)
     .setHeight(105);
   SpreadsheetApp.getUi() 
-    .showModalDialog(html, 'Gathering information...');
+    .showModalDialog(html, '👥 Getting previous orderers...');
 };
 
-// create the repeat orderer sidebar
+// Creates the repeat orderer sidebar (triggered from modal).
 function launchRepeatOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('repeatOrderer');
   template.orderers = getPreviousOrderers();
@@ -125,11 +135,11 @@ NOTES
 
 --- Version 1.1, Started on Tuesday, January 28th 2020 ---
 REQUIREMENTS:
-1. Add feature that enables user to select a row, then force populate the worksheets
+X 1. Add feature that enables user to select a row, then force populate the worksheets
 2. Add dropdown to sidebars where previous copy attorneys can be selected
 3. Enable mirroring of date, location, services, and time from Schedule a depo to Current List tabs on update by users
 4. Add a dropdown to sidebars with previous locations
-5. Hunt and remove bug causing Blake to get an extra report on Saturday
+X 5. Hunt and remove bug causing Blake to get an extra report on Saturday
 
 */
 
