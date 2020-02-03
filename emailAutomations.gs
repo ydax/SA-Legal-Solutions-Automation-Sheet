@@ -6,89 +6,93 @@
 @params {multiple} strings Arguments passed from the getDepositionData functions originating in the New Depositions sidebars
 */
 function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip) {
-  // Re-format date, time, location
-  var date = formatDateForEmail(depoDate);
-  var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
-  var depoLocation = locationFirm + ', ' + locationAddress1 + ', ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
-  var firstName = firstNameOnly(orderedBy);
-  
-  // Convert courtReporter, videographer, and PIP into bool
-  if (courtReporter !== '') {
-    var reporter = 'Yes';
-  } else {
-    var reporter = 'No';
-  };
-  
-  if (videographer !== '') {
-    var video = 'Yes';
-  } else {
-    var video = 'No';
-  };
-  
-  if (pip == true) {
-    var includesPip = 'Yes';
-  } else {
-    var includesPip = 'No';
-  };
-  
-  // Creates a PDF version of the scheduling confirmation.
-  var pdfUrl = createPDFConfirmation(orderedBy, caseStyle, date, witness, depoTime, depoLocation, services, courtReporter, videographer, pip);
-
-  // Dynamically generates HTML for the scheduling confirmation email to be sent to orderer.
-  var template = GmailApp.getDraft('r-3755280940389063773').getMessage().getBody();
-  
-  var pdf = DriveApp.getFileById(getIdFromUrl(pdfUrl));
-  var blob = pdf.getBlob().getAs('application/pdf').setName('SA Legal Solutions | Confirmation of ' + witness + ' Deposition on ' + depoDate + '.pdf');
-  
-  template = template.replace(/firstName/, firstNameOnly(orderedBy));
-  template = template.replace(/witnessName/, witness);
-  template = template.replace(/caseStyle/, caseStyle);
-  template = template.replace(/witnessName/, witness);
-  template = template.replace(/depoDate/, date);
-  template = template.replace(/depoTime/, depoTime);
-  template = template.replace(/depoLocation/, depoLocation);
-  template = template.replace(/serviceDescription/, services);
-  template = template.replace(/courtReporter/, courtReporter);
-  template = template.replace(/videographerInfo/, videographer);
-  template = template.replace(/pipInfo/, pip);
-  
-  // Sends the confirmation email.
-  GmailApp.sendEmail(
-    ordererEmail, 
-    // Confirmation of Witness name | Doe v. Doe | Date
-    'Confirmation of ' + witness + ' Deposition | ' + caseStyle + ' | ' + date, 
-    'Hello ' + firstName + ',\n\nThanks for sending this assignment to SA Legal Solutions. Our understanding of your requested resources & services are detailed below:\n• Case: ' + caseStyle + '\n• Witness: ' + witness + '\n• Date: ' + date + '\n• Time: ' + depoTime + '\n• Location: ' + depoLocation + '\n• Services: ' + services + '\n• Court reporter? ' + reporter + '\n• Videographer? ' + video + '\n• Picture-in-Picture? ' + includesPip + '\n\nA PDF version of this scheduling confirmation is available for your convenience and records here: ' + pdfUrl + '\n\nIf any changes are necessary, please let us know. Thanks for your business!\n\nSA Legal Solutions | Litigation Support Specialists\nPhone: 210-591-1791\nAddress: 3201 Cherry Ridge, B 208-3, SATX 78230\nWebsite: www.salegalsolutions.com\nEmail: depos@salegalsolutions.com', 
-    {
-    attachments: [blob],
-    htmlBody: template,
-    name: 'SA Legal Solutions',
-    bcc: 'shannonk@salegalsolutions.com'
-    }
-  );
+  try {
+    // Re-format date, time, location
+    var date = formatDateForEmail(depoDate);
+    var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
+    var depoLocation = locationFirm + ', ' + locationAddress1 + ', ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
+    var firstName = firstNameOnly(orderedBy);
+    
+    // Convert courtReporter, videographer, and PIP into bool
+    if (courtReporter !== '') {
+      var reporter = 'Yes';
+    } else {
+      var reporter = 'No';
+    };
+    
+    if (videographer !== '') {
+      var video = 'Yes';
+    } else {
+      var video = 'No';
+    };
+    
+    if (pip == true) {
+      var includesPip = 'Yes';
+    } else {
+      var includesPip = 'No';
+    };
+    
+    // Creates a PDF version of the scheduling confirmation.
+    var pdfUrl = createPDFConfirmation(orderedBy, caseStyle, date, witness, depoTime, depoLocation, services, courtReporter, videographer, pip);
+    
+    // Dynamically generates HTML for the scheduling confirmation email to be sent to orderer.
+    var template = GmailApp.getDraft('r-3755280940389063773').getMessage().getBody();
+    
+    var pdf = DriveApp.getFileById(getIdFromUrl(pdfUrl));
+    var blob = pdf.getBlob().getAs('application/pdf').setName('SA Legal Solutions | Confirmation of ' + witness + ' Deposition on ' + depoDate + '.pdf');
+    
+    template = template.replace(/firstName/, firstNameOnly(orderedBy));
+    template = template.replace(/witnessName/, witness);
+    template = template.replace(/caseStyle/, caseStyle);
+    template = template.replace(/witnessName/, witness);
+    template = template.replace(/depoDate/, date);
+    template = template.replace(/depoTime/, depoTime);
+    template = template.replace(/depoLocation/, depoLocation);
+    template = template.replace(/serviceDescription/, services);
+    template = template.replace(/courtReporter/, courtReporter);
+    template = template.replace(/videographerInfo/, videographer);
+    template = template.replace(/pipInfo/, pip);
+    
+    // Sends the confirmation email.
+    GmailApp.sendEmail(
+      ordererEmail, 
+      // Confirmation of Witness name | Doe v. Doe | Date
+      'Confirmation of ' + witness + ' Deposition | ' + caseStyle + ' | ' + date, 
+      'Hello ' + firstName + ',\n\nThanks for sending this assignment to SA Legal Solutions. Our understanding of your requested resources & services are detailed below:\n• Case: ' + caseStyle + '\n• Witness: ' + witness + '\n• Date: ' + date + '\n• Time: ' + depoTime + '\n• Location: ' + depoLocation + '\n• Services: ' + services + '\n• Court reporter? ' + reporter + '\n• Videographer? ' + video + '\n• Picture-in-Picture? ' + includesPip + '\n\nA PDF version of this scheduling confirmation is available for your convenience and records here: ' + pdfUrl + '\n\nIf any changes are necessary, please let us know. Thanks for your business!\n\nSA Legal Solutions | Litigation Support Specialists\nPhone: 210-591-1791\nAddress: 3201 Cherry Ridge, B 208-3, SATX 78230\nWebsite: www.salegalsolutions.com\nEmail: depos@salegalsolutions.com', 
+      {
+      attachments: [blob],
+      htmlBody: template,
+      name: 'SA Legal Solutions',
+      bcc: 'shannonk@salegalsolutions.com'
+      }
+    );
+  } catch (error) {
+    Logger.log(error);
+  }
 };
 
 /** Re-sends confirmation emails. */
-function resendConfirmationEmail (withPDF) {
+function resendConfirmationEmail () {
   var ss = SpreadsheetApp.getActive();
   
-  /** Ensures that user is highlighting a row in Schedule a depo Sheet. */
+  /** Ensures that user is highlighting a row (other than row 1) in Schedule a depo Sheet. */
   var currentSheet = ss.getActiveSheet().getName();
   if (currentSheet !== 'Schedule a depo') {
     SpreadsheetApp.getActiveSpreadsheet().toast('⚠️️ To use this tool, you must be on the \"Schedule a depo\" Sheet.');
     return;
-  }
+  };
+  var currentRow = ss.getActiveRange().getRow();
+  if(currentRow == 1) {
+    SpreadsheetApp.getActiveSpreadsheet().toast('⚠️️ Please highlight a row other than row 1.');
+    return;
+  };
   
   /** Gets current row and gathers data from it. */
-  Logger.log('got here 1');
   SpreadsheetApp.getActiveSpreadsheet().toast('🏎️💨 Automation initiated.');
   var deposSheet = ss.getSheetByName(currentSheet);
-  Logger.log('got here');
-  var currentRow = ss.getActiveRange().getRow();
-  Logger.log(currentRow);
   
   var rowData = deposSheet.getRange(currentRow, 2, 1, deposSheet.getLastColumn()).getValues()[0];
 
-  var depoDate = rowData[0];
   var witness = rowData[1];
   var orderedBy = rowData[2];
   var ordererEmail = rowData[3];
@@ -123,11 +127,20 @@ function resendConfirmationEmail (withPDF) {
   var copyPhone = rowData[33];
   var copyEmail = rowData[34];
   
-  // depoHour, depoMinute, amPm
-  Logger.log(depoTime);
+  // Restructures time variables to format expected by sendConfirmationToOrderer function.
+  var depoHourMatch = depoTime.match(/.*:/)[0];
+  var depoHour = depoHourMatch.substring(0, depoHourMatch.length - 1);
+  var depoMinuteMatch = depoTime.match(/:.*/)[0];
+  var depoMinute = depoMinuteMatch.substring(1, 3);
+  var amPm = depoTime.substring(depoTime.length - 2, depoTime.length);
   
-  // sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip)
-}
+  // Generates date format expected by sendConfirmationToOrderer function.
+  var unformattedDepoDate = dateFromHour(depoTime, currentRow).toString();
+  var depoDate = unformattedDepoDate.substring(0, 10);
+  
+  sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  SpreadsheetApp.getActiveSpreadsheet().toast('✅ Confirmation email successfully re-sent.');
+};
 
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// UTILITIES /////////////////////////////////////

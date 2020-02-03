@@ -32,7 +32,7 @@ function onOpen (e) {
               .addItem("👤 By Witness", "searchByWitness")
               .addItem("⚖️ By Case", "searchByCase"))
   .addItem("📋 Update Worksheets", "updateWorksheetsByRow")
-  .addItem("📧 Re-send Confirmation(s)", "launchConfirmationEmailsSidebar")
+  .addItem("📧 Re-send Conf. Email (by Row)", "launchConfEmailModal")
   .addToUi();
 };
 
@@ -71,11 +71,13 @@ function launchRepeatOrdererSidebar() {
   SpreadsheetApp.getUi().showSidebar(html);
 };
 
-// Launches confirmation email resending sidebar.
-function launchConfirmationEmailsSidebar() {
-  var template = HtmlService.createTemplateFromFile('resendConfirmation');
-  var html = template.evaluate().setTitle('📧 Re-send Confirmation Email(s)');
-  SpreadsheetApp.getUi().showSidebar(html);
+// Launches resending confirmation email modal.
+function launchConfEmailModal() {
+  var html = HtmlService.createHtmlOutputFromFile('resendConfM')
+    .setWidth(350)
+    .setHeight(105);
+  SpreadsheetApp.getUi() 
+    .showModalDialog(html, '🤖 Resending confirmation...');
 };
 
 // Runs an unimportant function when user isn't depos@salegalsolutions.com

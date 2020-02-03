@@ -1,0 +1,26 @@
+<head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script>
+    window.onload = function() {    
+    //console.log('window.onload ran!');
+    
+      google.script.run // initiates loading the sidebar I want to call
+        .withSuccessHandler(closeDialog) // calls the closing function when load is successful
+        .resendConfirmationEmail()
+    };
+    
+    window.closeDialog = function() {
+      google.script.host.close();
+    };
+</script>
+
+  </head>
+
+  <body>
+    <h5>This will take a few moments. 🧘️</h5>
+    <div class="progress">
+        <div class="indeterminate"></div>
+    </div>
+  </body>
