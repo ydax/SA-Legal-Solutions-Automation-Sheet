@@ -627,17 +627,6 @@ function getCopyAttorneys () {
     return 0;
   });
   
-  /** Removes duplicates from array of arrays. */
-  for (var i = 0; i < sortedCopyAttys.length; i++) {
-    if (i !== 0) {
-      var previousName = sortedCopyAttys[i -1][0];
-      var name = sortedCopyAttys[i][0];
-      if (previousName == name) {
-        sortedCopyAttys.splice(i, 1);
-      };
-    };
-  };
-  
   /** Removes any empty arrays at the beginning of array of arrays. */
   while(sortedCopyAttys[0][0] == '') {
     sortedCopyAttys.splice(0, 1);
