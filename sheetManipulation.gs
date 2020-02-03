@@ -671,17 +671,6 @@ function getPreviousLocations () {
     return 0;
   });
   
-  /** Removes duplicates from array of arrays. */
-  for (var i = 0; i < sortedLocations.length; i++) {
-    if (i !== 0) {
-      var previousLocation = sortedLocations[i -1][0];
-      var location = sortedLocations[i][0];
-      if (previousLocation == location) {
-        sortedLocations.splice(i, 1);
-      };
-    };
-  };
-  
   /** Removes any empty arrays at the beginning of array of arrays. */
   while(sortedLocations[0][0] == '') {
     sortedLocations.splice(0, 1);
