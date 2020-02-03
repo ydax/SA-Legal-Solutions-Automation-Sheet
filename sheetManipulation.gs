@@ -646,7 +646,49 @@ function getCopyAttorneys () {
   return sortedCopyAttys;
 };
 
+/** Returns an array of copy attorney arrays.
+* @return {copyAttys} Array of arrays of copy attorneys with each array structured like this: 
+* [Copy Atty, Copy Firm, Firm Address 1, Firm Address 2, City, State, Zip Phone, Email]
+*/
+function getPreviousLocations () {
+  var ss = SpreadsheetApp.getActive();
+  var deposSheet = ss.getSheetByName('Schedule a depo');
+  var rawLocations = deposSheet.getRange(2, 17, deposSheet.getLastRow(), 7).getValues();
+  
+  /** Sorts the array of copy attorney arrays alphabetically by name. */
+  var sortedLocations = rawLocations.sort(function(a, b) {
 
+    var nameA = a[0];
+    var nameB = b[0];
+    
+    if (nameA < nameB) {
+      return -1;
+    };
+    if (nameA > nameB) {
+      return 1;
+    };
+    
+    return 0;
+  });
+  
+  /** Removes duplicates from array of arrays. */
+  for (var i = 0; i < sortedLocations.length; i++) {
+    if (i !== 0) {
+      var previousLocation = sortedLocations[i -1][0];
+      var location = sortedLocations[i][0];
+      if (previousLocation == location) {
+        sortedLocations.splice(i, 1);
+      };
+    };
+  };
+  
+  /** Removes any empty arrays at the beginning of array of arrays. */
+  while(sortedLocations[0][0] == '') {
+    sortedLocations.splice(0, 1);
+  };
+
+  return sortedLocations;
+};
 
 
 

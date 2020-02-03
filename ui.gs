@@ -40,6 +40,7 @@ function onOpen (e) {
 function launchNewOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('newOrderer');
   template.copyAttys = getCopyAttorneys();
+  template.previousLocations = getPreviousLocations();
   var html = template.evaluate().setTitle('🆕 New Deposition from a New Orderer');
   SpreadsheetApp.getUi().showSidebar(html);
 };
@@ -66,6 +67,7 @@ function initiateRepeatOrdererModal() {
 function launchRepeatOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('repeatOrderer');
   template.orderers = getPreviousOrderers();
+  template.previousLocations = getPreviousLocations();
   template.copyAttys = getCopyAttorneys();
   var html = template.evaluate().setTitle('🔁 New Deposition from a Repeat Orderer');
   SpreadsheetApp.getUi().showSidebar(html);

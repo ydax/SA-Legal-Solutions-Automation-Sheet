@@ -118,26 +118,37 @@
             <div class="row">
                 <hr class="divider red darken-3">
                 <p class="flow-text grey-text">Location Information</p>
+                <blockquote>
+                    Enter a new deposition location manually or autofill by selecting a location from the dropdown menu.
+                </blockquote>
+                <div class="input-field col s12">
+                <select class="prevLocation" name="prevLocation" id="prevLocation">
+                    <option value="" disabled selected>Select Location</option>
+                        <? for (var i = 0; i < previousLocations.length; i++) { ?>
+                            <option value="<?= i; ?>"><?= previousLocations[i][0]; ?></option>
+                        <? } ?>
+                    </select>
+                </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">business</i>
                         <input type="text" id="locationFirm" name="locationFirm">
-                        <label for="locationFirm">Location Firm</label>
                     </div>
+                    <label class="right" for="locationFirm">Location Firm</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">add_location</i>
                         <input type="text" id="locationAddress1" name="locationAddress1">
-                        <label for="locationAddress1">Location Address 1</label>
                     </div>
+                    <label class="right" for="locationAddress1">Location Address 1</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">add_location</i>
                         <input type="text" id="locationAddress2" name="locationAddress2">
-                        <label for="locationAddress2">Location Address 2</label>
                     </div>
+                    <label class="right" for="locationAddress2">Location Address 2</label>
                 </div>
                 <div class="row">
                     <div class="input-field col s6">
@@ -157,8 +168,8 @@
                     <div class="input-field col s12">
                         <i class="material-icons prefix">phone</i>
                         <input type="text" id="locationPhone" name="locationPhone">
-                        <label for="locationPhone">Location Phone Number</label>
                     </div>
+                    <label class="right" for="locationPhone">Location Phone Number</label>
                 </div>
             </div>
             <!-- Services -->
@@ -289,6 +300,45 @@
         </div>
     </form>
 
+    
+    <!-- Synthetic Arrays for Previous Deposition Locations -->
+    <!-- Dynamically prints location firms and hides them. -->
+    <? for (var i = 0; i < previousLocations.length; i++) { ?>
+      <div class="previous-location-names" style='display:none;'><?= previousLocations[i][0]; ?></div>
+    <? } ?>
+
+    <!-- Dynamically prints location addresses (1) and hides them. -->
+    <? for (var i = 0; i < previousLocations.length; i++) { ?>
+      <div class="previous-location-addresses-1" style='display:none;'><?= previousLocations[i][1]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints location firm addresses (2) and hides them. -->
+    <? for (var i = 0; i < previousLocations.length; i++) { ?>
+      <div class="previous-location-addresses-2" style='display:none;'><?= previousLocations[i][2]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints previous location cities and hides them. -->
+    <? for (var i = 0; i < previousLocations.length; i++) { ?>
+      <div class="previous-location-cities" style='display:none;'><?= previousLocations[i][3]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints previous location states and hides them. -->
+    <? for (var i = 0; i < previousLocations.length; i++) { ?>
+      <div class="previous-location-states" style='display:none;'><?= previousLocations[i][4]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints previous location zip codes and hides them. -->
+    <? for (var i = 0; i < previousLocations.length; i++) { ?>
+      <div class="previous-location-zips" style='display:none;'><?= previousLocations[i][5]; ?></div>
+    <? } ?>
+    
+    <!-- Dynamically prints previous location phone numbers and hides them. -->
+    <? for (var i = 0; i < previousLocations.length; i++) { ?>
+      <div class="previous-location-phones" style='display:none;'><?= previousLocations[i][6]; ?></div>
+    <? } ?>
+
+
+    <!-- Synthetic Arrays for Previous Copy Attorneys -->
     <!-- Dynamically prints copy attorney names and hides them. -->
     <? for (var i = 0; i < copyAttys.length; i++) { ?>
       <div class="copy-names" style='display:none;'><?= copyAttys[i][0]; ?></div>
@@ -333,6 +383,34 @@
     <? for (var i = 0; i < copyAttys.length; i++) { ?>
       <div class="copy-emails" style='display:none;'><?= copyAttys[i][8]; ?></div>
     <? } ?>
+    
+    
+    <!-- Populates deposition location information on user selection. -->
+    <script>
+    $(".prevLocation").change(function() {
+      /** Gets index of user selection in the copy attorneys array. */
+      var selection = $('.prevLocation').val();
+      
+      /** Gathers arrays of copy attorney array elements. */
+      var prevLocations = $(".previous-location-names").get();
+      var prevLocationAddresses1 = $(".previous-location-addresses-1").get();
+      var prevLocationAddresses2 = $(".previous-location-addresses-2").get();
+      var prevLocationCities = $(".previous-location-cities").get();
+      var prevLocationStates = $(".previous-location-states").get();
+      var prevLocationZips = $(".previous-location-zips").get();
+      var prevLocationPhones = $(".previous-location-phones").get();
+      
+      /** Sets values of form fields based on index user has selected. */
+      $('#locationFirm').val(prevLocations[selection].innerHTML);
+      $('#locationAddress1').val(prevLocationAddresses1[selection].innerHTML);
+      $('#locationAddress2').val(prevLocationAddresses2[selection].innerHTML);
+      $('#locationCity').val(prevLocationCities[selection].innerHTML);
+      $('#locationState').val(prevLocationStates[selection].innerHTML);
+      $('#locationZip').val(prevLocationZips[selection].innerHTML);
+      $('#locationPhone').val(prevLocationPhones[selection].innerHTML);
+    });
+    </script>
+    
     
     <!-- Populates copy attorney information on user selection. -->
     <script>
