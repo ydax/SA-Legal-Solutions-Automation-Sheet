@@ -32,6 +32,7 @@ function onOpen (e) {
               .addItem("👤 By Witness", "searchByWitness")
               .addItem("⚖️ By Case", "searchByCase"))
   .addItem("📋 Update Worksheets", "updateWorksheetsByRow")
+  .addItem("📧 Re-send Confirmation(s)", "launchConfirmationEmailsSidebar")
   .addToUi();
 };
 
@@ -67,6 +68,13 @@ function launchRepeatOrdererSidebar() {
   template.orderers = getPreviousOrderers();
   template.copyAttys = getCopyAttorneys();
   var html = template.evaluate().setTitle('🔁 New Deposition from a Repeat Orderer');
+  SpreadsheetApp.getUi().showSidebar(html);
+};
+
+// Launches confirmation email resending sidebar.
+function launchConfirmationEmailsSidebar() {
+  var template = HtmlService.createTemplateFromFile('resendConfirmation');
+  var html = template.evaluate().setTitle('📧 Re-send Confirmation Email(s)');
   SpreadsheetApp.getUi().showSidebar(html);
 };
 

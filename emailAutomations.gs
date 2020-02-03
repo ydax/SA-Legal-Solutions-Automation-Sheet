@@ -67,6 +67,68 @@ function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate,
   );
 };
 
+/** Re-sends confirmation emails. */
+function resendConfirmationEmail (withPDF) {
+  var ss = SpreadsheetApp.getActive();
+  
+  /** Ensures that user is highlighting a row in Schedule a depo Sheet. */
+  var currentSheet = ss.getActiveSheet().getName();
+  if (currentSheet !== 'Schedule a depo') {
+    SpreadsheetApp.getActiveSpreadsheet().toast('⚠️️ To use this tool, you must be on the \"Schedule a depo\" Sheet.');
+    return;
+  }
+  
+  /** Gets current row and gathers data from it. */
+  Logger.log('got here 1');
+  SpreadsheetApp.getActiveSpreadsheet().toast('🏎️💨 Automation initiated.');
+  var deposSheet = ss.getSheetByName(currentSheet);
+  Logger.log('got here');
+  var currentRow = ss.getActiveRange().getRow();
+  Logger.log(currentRow);
+  
+  var rowData = deposSheet.getRange(currentRow, 2, 1, deposSheet.getLastColumn()).getValues()[0];
+
+  var depoDate = rowData[0];
+  var witness = rowData[1];
+  var orderedBy = rowData[2];
+  var ordererEmail = rowData[3];
+  var caseStyle = rowData[4];
+  var depoTime = rowData[5];
+  var firm = rowData[6];
+  var attorney = rowData[7];
+  var firmAddress1 = rowData[8];
+  var firmAddress2 = rowData[9];
+  var city = rowData[10];
+  var state = rowData[11];
+  var zip = rowData[12];
+  var attorneyPhone = rowData[13];
+  var attorneyEmail = rowData[14];
+  var locationFirm = rowData[15];
+  var locationAddress1 = rowData[16];
+  var locationAddress2 = rowData[17];
+  var locationCity = rowData[18];
+  var locationState = rowData[19];
+  var locationZip = rowData[20];
+  var services = rowData[22];
+  var courtReporter = rowData[23];
+  var videographer = rowData[24];
+  var pip = rowData[25];
+  var copyAttorney = rowData[26];
+  var copyFirm = rowData[27];
+  var copyAddress1 = rowData[28];
+  var copyAddress2 = rowData[29];
+  var copyCity = rowData[30];
+  var copyState = rowData[31];
+  var copyZip = rowData[32];
+  var copyPhone = rowData[33];
+  var copyEmail = rowData[34];
+  
+  // depoHour, depoMinute, amPm
+  Logger.log(depoTime);
+  
+  // sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip)
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// UTILITIES /////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
