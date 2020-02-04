@@ -451,7 +451,6 @@ function updateConfirmationOfScheduling(locationFirm, locationAddress1, location
 @param {editRow} number The row where a user has just edited the time or date of a depo in the Schedule a depo Sheet.
 */
 function updateSheetsOnTimeOrDateEdit(editRow) {
-  editRow = 2;
   var ss = SpreadsheetApp.getActive();
   var scheduleSheet = ss.getSheetByName('Schedule a depo');
   
@@ -626,6 +625,17 @@ function getCopyAttorneys () {
     
     return 0;
   });
+  
+  /** Removes duplicates from array of arrays. */
+  for (var i = 0; i < sortedCopyAttys.length; i++) {
+    if (i !== 0) {
+      var previousName = sortedCopyAttys[i -1][0];
+      var name = sortedCopyAttys[i][0];
+      if (previousName == name) {
+        sortedCopyAttys.splice(i, 1);
+      };
+    };
+  };
   
   /** Removes any empty arrays at the beginning of array of arrays. */
   while(sortedCopyAttys[0][0] == '') {

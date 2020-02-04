@@ -148,11 +148,14 @@ NOTES
 --- Version 1.1, Started on Tuesday, January 28th 2020 ---
 REQUIREMENTS:
 X 1. Add feature that enables user to select a row, then force populate the worksheets
-2. Add dropdown to sidebars where previous copy attorneys can be selected
-3. Enable mirroring of date, location, services, and time from Schedule a depo to Current List tabs on update by users
-4. Add a dropdown to sidebars with previous locations
+X 2. Add dropdown to sidebars where previous copy attorneys can be selected
+X 3. Enable mirroring of date, location, services, and time from Schedule a depo to Current List tabs on update by users
+   > date already works
+   > time isn't on the current list
+   > location isn't on the current list
+   > services aren't on the current list
+X 4. Add a dropdown to sidebars with previous locations
 X 5. Hunt and remove bug causing Blake to get an extra report on Saturday
-
 */
 
 

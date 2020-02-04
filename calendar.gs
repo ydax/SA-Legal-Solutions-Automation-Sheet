@@ -151,9 +151,6 @@ function editDepoDate(e, ss, SACal, depoSheet, editColumn, editRow) {
     depoSheet.getRange(editRow, 37).setValue(event.getId());
     ss.toast('✅ Services Calendar Updated Successfully');
     
-    // Updates worksheets.
-    updateSheetsOnTimeOrDateEdit(editRow)
-    
   } catch (error) {
     SpreadsheetApp.getUi().alert('⚠️ Unable to update Services calendar with this change. The updated deposition date you entered in row ' + editRow + ', column ' + editColumn + ' is NOT reflected on the Services calendar. Please update it manually.');
     addToDevLog('In event date onEdit function: ' + error);
@@ -312,7 +309,6 @@ function modifyDepoDateInCurrentList(e, newDate, editRow) {
     rowToModify = matchingDateRows[0];
   } else {
     var witness = scheduleSheet.getRange(editRow, 3).getValue();
-    Logger.log(witness);
     matchingDateRows.forEach(function(matchingRow) {
       if (currentListSheet.getRange(matchingRow, 2).getValue() === witness) {
         rowToModify = matchingRow;
@@ -330,6 +326,54 @@ function modifyDepoDateInCurrentList(e, newDate, editRow) {
   currentListSheet.getRange(rowToModify, 1).setValue(updatedDate);
   ss.toast('✅ Depo information in Current List Sheet updated successfully');
 };
+
+/** Mirrors changes made to non-time/date columns in Schedule a depo on Current List. Triggered from manuallyUpdateCalendar(e).
+// date, location, services, and time
+@param {editRow} number Row in Schedule a depo Sheet that's been edited.
+!!! @dev This function was built as part of the 1.1 app requirements, but is unfinished because the initial requests (time, location, services)
+aren't included on the Current List as of writing this. If this changes, this function will be useful.
+*/
+function syncWithCurrentList(editRow, editColumn) {
+  var editRow = 7;
+  var ss = SpreadsheetApp.getActive();
+  var currentListSheet = ss.getSheetByName('Current List');
+  var scheduleSheet = ss.getSheetByName('Schedule a depo');
+  
+  // Builds the date object to enable search in Current List Sheet.
+  var rawDate = scheduleSheet.getRange(editRow, 2).getValue().toString();
+  var month = monthToMm(rawDate.substring(4, 7));
+  var day = rawDate.substring(8, 10);
+  var currentListSearchDate = month + '-' + day;
+  
+  // Creates an array of row numbers in the Current List matching the currentListSearchDate.
+  var currentListData = currentListSheet.getRange(2, 1, currentListSheet.getLastRow(), currentListSheet.getLastColumn()).getValues();
+  var matchingDateRows = [];
+  for (var i = 0; i < currentListData.length; i++ ) {
+    if (currentListData[i][0] === currentListSearchDate) {
+      matchingDateRows.push(i + 2);
+    };
+  };
+  
+  var rowToModify;
+  
+  // If there's more than one matching row from the Current List, cycle through and look for witness match.
+  if (matchingDateRows.length === 0) {
+    SpreadsheetApp.getActiveSpreadsheet().toast('❌ Matching depo not found in Current List. Nothing modified in Current List Sheet.');
+  } else if (matchingDateRows.length === 1) {
+    rowToModify = matchingDateRows[0];
+  } else {
+    var witness = scheduleSheet.getRange(editRow, 3).getValue();
+    matchingDateRows.forEach(function(matchingRow) {
+      if (currentListSheet.getRange(matchingRow, 2).getValue() === witness) {
+        rowToModify = matchingRow;
+      };
+    });
+  };
+  
+  Logger.log(rowToModify) // Works
+ 
+};
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////
