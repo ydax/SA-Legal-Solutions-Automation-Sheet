@@ -59,6 +59,8 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
     sendConfirmationToOrderer(orderedBy, orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
     SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
   };
+  
+  SpreadsheetApp.getActiveSpreadsheet().toast('👌 Automation completed successfully.');
 };
 
 /** Collects data from repeat orderer deposition sidebar
@@ -148,6 +150,8 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
     sendConfirmationToOrderer(previousOrderer, ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
     SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
   };
+  
+  SpreadsheetApp.getActiveSpreadsheet().toast('👌 Automation completed successfully.');
 };
 
 /** Cancels a scheduled deposition. 

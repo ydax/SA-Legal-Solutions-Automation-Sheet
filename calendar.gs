@@ -10,6 +10,10 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
   var ss = SpreadsheetApp.getActive();
   var depoSheet = ss.getSheetByName('Schedule a depo');
   
+  //////////////////////////////////////////////////////
+  Logger.log('depoDate from inside addEvent: ' + depoDate);
+  //////////////////////////////////////////////////////
+  
   try {
     // Create event title and description
     var title = '(' + services + ')' + ' ' + firm + ' - ' + witnessName;
@@ -21,8 +25,10 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
     var formattedDate = toStringDate(depoDate);
     var formattedHours = to24Format(depoHour, depoMinute, amPm);
     var formattedDateAndHour = formattedDate + ' ' + formattedHours;
-    Logger.log(formattedDate);
-    Logger.log(formattedDateAndHour);
+    //////////////////////////////////////////////////////
+    Logger.log('formattedDate from inside addEvent: ' + formattedDate);
+    Logger.log('formattedDateAndHour from inside addEvent: ' + formattedDateAndHour);
+    //////////////////////////////////////////////////////
     
     var event = SACal.createEvent(title, 
                                   new Date(formattedDateAndHour),
@@ -32,7 +38,6 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
                                   });
     
     // Add eventId to the Schedule a depo Sheet.
-    Logger.log(event.getId());
     depoSheet.getRange(2, 37).setValue(event.getId());
     SpreadsheetApp.getActiveSpreadsheet().toast('📅 Deposition added to Services calendar');
   } catch (error) {

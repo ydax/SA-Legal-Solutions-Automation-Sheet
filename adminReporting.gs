@@ -113,7 +113,7 @@ function addToDevLog(message) {
 };
 
 /** Gets developer logs and logs them to the console */
-function logDevLogs() {
+function seeDevLogs() {
   var props = PropertiesService.getDocumentProperties();
   var devLog = props.getProperty('devLog');
   Logger.log(devLog);
@@ -164,15 +164,6 @@ function seeScriptPropsValues() {
   var keys = PropertiesService.getScriptProperties().getKeys();
   keys.forEach(function(key) {
     var value = PropertiesService.getScriptProperties().getProperty(key);
-    Logger.log(value);
-  });
-};
-
-/** Provides visibility into Document Properties values (where dev logs are). */
-function seeDevLogs() {
-  var keys = PropertiesService.getDocumentProperties().getKeys();
-  keys.forEach(function(key) {
-    var value = PropertiesService.getDocumentProperties().getProperty(key);
     Logger.log(value);
   });
 };
