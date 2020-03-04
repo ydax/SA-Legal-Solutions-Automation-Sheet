@@ -69,133 +69,125 @@
 </head>
 
 <body>
+    <div class="container">
+        <h4 class="red-text text-darken-3">Enter a deposition ordered by a new client.</h4>
+    </div>
+    
+    <!-- Form that Collects Data from User --> 
     <form id="newDepoData" onsubmit="getDepoData(event)">
-        <div class="container">
-            <div class="row">
-                <h4 class="red-text text-darken-3">Enter a deposition ordered by a new client.</h4>
-            </div>
-            <!-- Order Information -->
-            <div class="row">
-                <p class="flow-text grey-text">Orderer Information</p>
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">person</i>
-                    <input type="text" id="orderedBy" name="orderedBy">
-                    <label for="orderedBy">Ordered By</label>
-                </div>
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">contact_mail</i>
-                    <input type="email" class="validate" id="orderedByEmail" name="orderedByEmail">
-                    <label for="orderedByEmail">Orderer Email Address</label>
-                </div>
-            </div>
+        <ul class="collapsible">
+        
+            <!-- Orderer Information -->
+            <li class="active">
+                <div class="collapsible-header"><p class="flow-text red-text text-darken-3"><i class="material-icons">person_pin</i>Orderer Information</p></div>
+                <div class="collapsible-body">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">person</i>
+                        <input type="text" id="orderedBy" name="orderedBy">
+                        <label for="orderedBy">Ordered By</label>
+                    </div>
+                        <div class="input-field col s12">
+                        <i class="material-icons prefix">contact_mail</i>
+                        <input type="email" class="validate" id="orderedByEmail" name="orderedByEmail">
+                        <label for="orderedByEmail">Orderer Email Address</label>
+                    </div>
+               </div>
+            </li>
+            
             <!-- Deposition Details -->
-            <hr class="divider red darken-3">
-            <p class="flow-text grey-text">Deposition Details</p>
-            <div class="row">
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">person_outline</i>
-                    <input type="text" id="witnessName" name="witnessName">
-                    <label for="witnessName">Witness Name</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">gavel</i>
-                    <input type="text" placeholder="e.g. Brown vs. Mayden" id="caseStyle" name="caseStyle">
-                    <label for="caseStyle">Case Style</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">date_range</i>
-                    <input type="date" id="depoDate" name="depoDate">
-                    <label for="depoDate">Date</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s4">
-                    <input type="number" value="10" id="depoHour" max="12">
-                    <label for="depoHour">Hour</label>
-                </div>
-                <div class="input-field col s4">
-                    <input type="number" value="30" id="depoMinute" max="59">
-                    <label for="depoMinute">Minute</label>
-                </div>
-                <div class="input-field col s4">
-                    <select id="amPm">
-                        <option value="AM" selected>AM</option>
-                        <option value="PM">PM</option>
-                    </select>
-                </div>
-            </div>
-            <!-- Attorney Information -->
-            <div class="row">
-                <hr class="divider red darken-3">
-                <p class="flow-text grey-text">Attorney Information</p>
+            <li>
+                <div class="collapsible-header"><p class="flow-text red-text text-darken-3"><i class="material-icons">collections_bookmark</i>Deposition Details</p></div>
+                <div class="collapsible-body">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">person_outline</i>
+                        <input type="text" id="witnessName" name="witnessName">
+                        <label for="witnessName">Witness Name</label>
+                    </div>
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">gavel</i>
+                        <input type="text" placeholder="e.g. Brown vs. Mayden" id="caseStyle" name="caseStyle">
+                        <label for="caseStyle">Case Style</label>
+                    </div>
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">date_range</i>
+                        <input type="date" id="depoDate" name="depoDate">
+                        <label for="depoDate">Date</label>
+                    </div>
                 <div class="row">
+                    <div class="input-field col s4">
+                        <input type="number" value="10" id="depoHour" max="12">
+                        <label for="depoHour">Hour</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <input type="number" value="30" id="depoMinute" max="59">
+                        <label for="depoMinute">Minute</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <select id="amPm">
+                            <option value="AM" selected>AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+                </div>
+                </div>
+            </li>
+            
+            <!-- Attorney Information -->
+            <li>
+                <div class="collapsible-header"><p class="flow-text red-text text-darken-3"><i class="material-icons">contacts</i>Attorney Information</p></div>
+                <div class="collapsible-body">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">business</i>
                         <input type="text" id="firm" name="firm">
                         <label for="firm">Firm</label>
                     </div>
-                </div>
-                <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">person</i>
                         <input type="text" id="attorney" name="attorney">
                         <label for="attorney">Attorney</label>
                     </div>
-                </div>
-                <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">contact_mail</i>
                         <input type="email" class="validate" id="attorneyEmail" name="attorneyEmail">
                         <label for="attorneyEmail">Attorney Email</label>
                     </div>
-                </div>
-                <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">contact_phone</i>
                         <input type="text" id="attorneyPhone" name="attorneyPhone">
                         <label for="attorneyPhone">Attorney Phone Number</label>
                     </div>
-                </div>
-                <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">add_location</i>
                         <input type="text" id="firmAddress1" name="firmAddress1">
                         <label for="firmAddress1">Firm Address 1</label>
                     </div>
-                </div>
-                <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">add_location</i>
                         <input type="text" id="firmAddress2" name="firmAddress2">
                         <label for="firmAddress2">Firm Address 2</label>
                     </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input type="text" value="San Antonio" id="city" name="city">
+                            <label for="city">City</label>
+                        </div>
+                        <div class="input-field col s2">
+                            <input type="text" value="TX" id="state" name="state">
+                            <label for="state">State</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <input type="text" placeholder="78232" id="zip" name="zip">
+                            <label for="zip">Zip</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="input-field col s6">
-                        <input type="text" value="San Antonio" id="city" name="city">
-                        <label for="city">City</label>
-                    </div>
-                    <div class="input-field col s2">
-                        <input type="text" value="TX" id="state" name="state">
-                        <label for="state">State</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <input type="text" placeholder="78232" id="zip" name="zip">
-                        <label for="zip">Zip</label>
-                    </div>
-                </div>
-            </div>
+            </li>
+            
             <!-- Location Information -->
-            <div class="row">
-                <hr class="divider red darken-3">
-                <p class="flow-text grey-text">Location Information</p>
-                <blockquote>
-                    Enter a new deposition location manually or autofill by selecting a location from the dropdown menu.
-                </blockquote>
+            <li>
+            <div class="collapsible-header"><p class="flow-text red-text text-darken-3"><i class="material-icons">map</i>Location Information</p></div>
+            <div class="collapsible-body">
+                <blockquote>Enter a new deposition location manually or autofill by selecting a location from the dropdown menu.</blockquote>
                 <div class="input-field col s12">
                 <select class="prevLocation" name="prevLocation" id="prevLocation">
                     <option value="" disabled selected>Select Location</option>
@@ -204,26 +196,17 @@
                         <? } ?>
                     </select>
                 </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">business</i>
-                        <input type="text" id="locationFirm" name="locationFirm">
-                    </div>
-                    <label class="right" for="locationFirm">Location Firm</label>
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">business</i>
+                    <input type="text" id="locationFirm" name="locationFirm">
                 </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">add_location</i>
-                        <input type="text" id="locationAddress1" name="locationAddress1">
-                    </div>
-                    <label class="right" for="locationAddress1">Location Address 1</label>
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">add_location</i>
+                    <input type="text" id="locationAddress1" name="locationAddress1">
                 </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">add_location</i>
-                        <input type="text" id="locationAddress2" name="locationAddress2">
-                    </div>
-                    <label class="right" for="locationAddress2">Location Address 2</label>
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">add_location</i>
+                    <input type="text" id="locationAddress2" name="locationAddress2">
                 </div>
                 <div class="row">
                     <div class="input-field col s6">
@@ -239,15 +222,15 @@
                         <label for="locationZip">Zip</label>
                     </div>
                 </div>
-                <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">phone</i>
                         <input type="text" id="locationPhone" name="locationPhone">
                     </div>
                     <label class="right" for="locationPhone">Location Phone Number</label>
-                </div>
             </div>
-            <!-- Services -->
+            </li>
+            
+            <!-- Services TODO - Update the UIs with Collapsibles Beyond this Point -->
             <div class="row">
                 <hr class="divider red darken3">
                 <p class="flow-text grey-text">Services Included</p>
@@ -351,6 +334,7 @@
                         <label class="right" for="copyEmail">Copy Attorney Email</label>
                 </div>
             </div>
+          </ul>
             <!-- Confirmation Email Option -->
             <div class="row">
                 <hr class="divider red darken3">
@@ -508,6 +492,13 @@
       $('#copyZip').val(copyZips[selection].innerHTML);
       $('#copyPhone').val(copyPhones[selection].innerHTML);
       $('#copyEmail').val(copyEmails[selection].innerHTML);
+    });
+    </script>
+    
+    <!-- Initializes Materialize Collapsibles -->
+    <script>
+    $(document).ready(function(){
+      $('.collapsible').collapsible();
     });
     </script>
 </body>
