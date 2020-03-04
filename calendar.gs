@@ -221,14 +221,20 @@ function editDepoGeneral(e, ss, SACal, depoSheet, editColumn, editRow) {
   // Tries to update Services calendar, alerts user with result.
   try {
     
-    // Stores new event data and formats it.
+    /** Stores new event data and formats it. */
+    // Grabs the event date, checks whether it's after daylight savings time, adjusts if yes.
+    var rawDepoDate = depoSheet.getRange(editRow, 2).getValue().toString();
+    var intDayNumber = parseInt(rawDepoDate.substring(8, 10), 10);
+    if (rawDepoDate.substring(16, 18) == "23") {
+      intDayNumber++;
+    };
+    
     var services = depoSheet.getRange(editRow, 24).getValue();
     var firm = depoSheet.getRange(editRow, 8).getValue();
     var witnessName = depoSheet.getRange(editRow, 3).getValue();
     var depoTime = amPmTo24(depoSheet.getRange(editRow, 7).getValue());
-    var rawDepoDate = depoSheet.getRange(editRow, 2).getValue().toString();
     var monthNumber = monthToMm(rawDepoDate.substring(4, 7));
-    var dayNumber = rawDepoDate.substring(8, 10);
+    var dayNumber = intDayNumber.toString();
     var yearNumber = rawDepoDate.substring(11, 15);
     var dashDate = yearNumber + '-' + monthNumber + '-' + dayNumber;
     var formattedDate = toStringDate(dashDate);
