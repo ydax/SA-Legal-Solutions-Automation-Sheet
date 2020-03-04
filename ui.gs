@@ -23,7 +23,7 @@
 function onOpen (e) {
   var ui = SpreadsheetApp.getUi();
   
-  ui.createMenu("⚖️ SA Legal Services")
+  ui.createMenu("⚖️ SA Legal Solutions")
   .addSubMenu(SpreadsheetApp.getUi().createMenu("📝 Add Deposition(s)")
               .addItem("🔁 Repeat Orderer", "initiateRepeatOrdererModal")
               .addItem("🆕 New Orderer", "initiateNewOrdererModal"))
