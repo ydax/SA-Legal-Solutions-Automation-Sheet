@@ -495,6 +495,12 @@ function dateFromHour(hour, editRow) {
   var unformattedMonth = unformattedDate.substring(4, 7);
   var formattedMonth = monthToMm(unformattedMonth);
   var day = unformattedDate.substring(8, 10);
+  // If daylight savings time is setting the date to the date prior (due to daylight savings), adjust.
+  if (unformattedDate.substring(16, 18) === "23") {
+    day = parseInt(day, 10);
+    day++;
+    day = day.toString();
+  }
   var year = unformattedDate.substring(11, 15);
   
   // Creates date in Needed Format.
