@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////// INTERACTIONS BETWEEN SHEET AND SERVICES CALENDAR /////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,10 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
   var ss = SpreadsheetApp.getActive();
   var depoSheet = ss.getSheetByName('Schedule a depo');
   
+  //////////////////////////////////////////////////////
+  Logger.log('depoDate from inside addEvent: ' + depoDate);
+  //////////////////////////////////////////////////////
+  
   try {
     // Create event title and description
     var title = '(' + services + ')' + ' ' + firm + ' - ' + witnessName;
@@ -17,17 +22,22 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
     var depoLocation = locationFirm + ', ' + locationAddress1 + ' ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
     var description = 'Witness Name: ' + witnessName + '\nCase Style: ' + caseStyle + '\nOrdered by: ' + orderedBy + '\n\nCSR: ' +courtReporter + '\nVideographer: ' + videographer + '\nPIP: ' + pip + '\n\nLocation: ' + '\n' + depoLocation + '\n\nOur client:\n' + attorney + '\n' + firm + '\n' + firmAddress1 + ' ' + firmAddress2 + '\n' + city + ' ' + state + ' ' + zip;
     
-    // Prepares date object
-    let year = parseInt(depoDate.substring(0, 4), 10);
-    let month = parseInt(depoDate.substring(5, 7), 10);
-    let day = parseInt(depoDate.substring(8, 10), 10);
-    let second = 0;
-    let date = dateWithTimeZone(year, month, day, depoHour, depoMinute, second) ;
+    // Subtracts one hour from depo hour, because for some reason this script is an hour off and I can't figure out why. I know this is hacky.
+    depoHour = parseInt(depoHour, 10);
+    if (depoHour !== 1) {
+      depoHour--
+    } else {
+      depoHour = 12;
+    };
     
-    // Adds the deposition event to the Services calendar
+    // Add the deposition event to the Services calendar
+    var formattedDate = toStringDate(depoDate);
+    var formattedHours = to24Format(depoHour, depoMinute, amPm);
+    var formattedDateAndHour = formattedDate + ' ' + formattedHours;
+    
     var event = SACal.createEvent(title, 
-                                  new Date(date),
-                                  new Date(date),{
+                                  new Date(formattedDateAndHour),
+                                  new Date(formattedDateAndHour),{
                                     description: description,
                                     location: depoLocation
                                   });
@@ -620,29 +630,4 @@ function createTitleString(row) {
   var witness = depoSheet.getRange(row, 3).getValue();
   var eventTitle = '(' + services + ')' + firmName + ' - ' + witness;
   return eventTitle;
-};
-
-
-/** Returns a date object based on a timezone. Called by addEvent().
-* @params {date params} integers
-* Note: months begin with 0 in the below formula.
-*/
-function dateWithTimeZone(year, month, day, hour, minute, second) {
-  try {
-    // Month begins at 0 = January, so subtracts 1.
-    month--;
-    
-    let date = new Date(Date.UTC(year, month, day, hour, minute, second));
-    let timeZone = 'America/Chicago';
-    
-    let utcDate = new Date(date.toLocaleString('en-US', { timeZone: "UTC" }));
-    let tzDate = new Date(date.toLocaleString('en-US', { timeZone: timeZone }));
-    let offset = utcDate.getTime() - tzDate.getTime();
-    
-    date.setTime( date.getTime() + offset );
-  } catch (error) {
-    addToDevLog('Error inside dateWithTimeZone: ' + error);  
-  }
-
-  return date;
 };
