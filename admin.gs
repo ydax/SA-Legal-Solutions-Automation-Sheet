@@ -89,6 +89,148 @@ function sendOrderActivityReport() {
   };
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////
+//////// STORING AND RETREIVING PREVIOUS ORDERS, COPY ATTYS, AND LOCATIONS /////////
+////////////////////////////////////////////////////////////////////////////////////
+
+function updateInfrastructure() {
+  storeCopyAttys()
+  storePreviousLocations()
+  storePreviousOrderers()
+}
+
+// Saves a stringified array of filtered copy attys in Infrastructure sheet
+function storeCopyAttys() {
+  const stringCell = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(14, 2)
+  const deposSheet = SpreadsheetApp.getActive().getSheetByName('Schedule a depo')
+  
+  /** Loops through schedule a depo and does magic to create an array of copy attys ready to be stringified and stored */
+  const rawCopyAttys = deposSheet.getRange(2, 28, deposSheet.getLastRow(), 9).getValues()
+  const namesArray = []
+  const filteredArray = []
+  
+  rawCopyAttys.forEach(function(atty) {
+    if (atty[0] !== '') {
+      if (!namesArray.some(name => name === atty[0])) {
+        namesArray.push(atty[0])
+        filteredArray.push(atty)
+      }
+    }
+  })
+  
+  // Sorts the array of copy attorney arrays alphabetically by name
+  var sortedCopyAttys = filteredArray.sort(function(a, b) {
+
+    var nameA = a[0];
+    var nameB = b[0];
+    
+    if (nameA < nameB) {
+      return -1;
+    };
+    if (nameA > nameB) {
+      return 1;
+    };
+    
+    return 0;
+  });
+  
+  // Stores the array in 
+  let value = JSON.stringify(sortedCopyAttys)
+  stringCell.setValue(value)
+}
+
+// Gets array of copy attys / called by sidebar initiator functions used to add depos
+function returnCopyAttys() {
+  const stringCell = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(14, 2).getValue().toString()
+  return JSON.parse(stringCell)
+}
+
+// Saves a stringified array of filtered previous locations in Infrastructure sheet
+function storePreviousLocations() {
+  const stringCell = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(15, 2)
+  const deposSheet = SpreadsheetApp.getActive().getSheetByName('Schedule a depo')
+  
+  /** Loops through schedule a depo and does magic to create an array of copy attys ready to be stringified and stored */
+  var rawLocations = deposSheet.getRange(2, 17, deposSheet.getLastRow(), 7).getValues();
+  const namesArray = []
+  const filteredArray = []
+  
+  rawLocations.forEach(function(location) {
+    if (location[0] !== '') {
+      if (!namesArray.some(name => name === location[0])) {
+        namesArray.push(location[0])
+        filteredArray.push(location)
+      }
+    }
+  })
+  
+  // Sorts the array of copy attorney arrays alphabetically by name
+  var sortedLocations = filteredArray.sort(function(a, b) {
+
+    var nameA = a[0];
+    var nameB = b[0];
+    
+    if (nameA < nameB) {
+      return -1;
+    };
+    if (nameA > nameB) {
+      return 1;
+    };
+    
+    return 0;
+  });
+  
+  // Stores the array in 
+  let value = JSON.stringify(sortedLocations)
+  stringCell.setValue(value)
+}
+
+// Gets array of locations / called by sidebar initiator functions used to add depos
+function returnLocations() {
+  const stringCell = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(15, 2).getValue().toString()
+  return JSON.parse(stringCell)
+}
+
+// Stores a clean (no dupes, sorted by First Name) array of previous  orderers as a JSON string in infrastructure for fast recall
+function storePreviousOrderers () {
+  var ss = SpreadsheetApp.getActive()
+  const stringCell = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(16, 2)
+  var depoSheet = ss.getSheetByName('Schedule a depo');
+  var lastDepoSheetRow = depoSheet.getLastRow();
+  var rawOrdererData = depoSheet.getRange(2, 4, lastDepoSheetRow, 1).getValues();
+  
+  // Creates a 2d array of previous orderers.
+  var firstLevelArray = [];
+  rawOrdererData.forEach(function(element) {
+    firstLevelArray.push(element[0]);
+  });
+  
+  /** Removes all elements that are empty strings from an array
+  */
+  function isntEmpty (element) {
+  return element != '';
+  };
+  
+  // Filter out empty strings, remove duplicate elements, and sort the array
+  var firstLevelEmptiesRemoved = firstLevelArray.filter(isntEmpty);
+  
+  var uniqueArray = firstLevelEmptiesRemoved.filter(function(elem, index, self) {
+    return index === self.indexOf(elem);
+  });
+  
+  var sortedUniqueArray = uniqueArray.sort();
+  
+  stringCell.setValue(JSON.stringify(sortedUniqueArray))
+};
+
+// Gets array of previous orderers / called by sidebar initiator functions used to add depos
+function returnPreviousOrderers() {
+  const stringCell = SpreadsheetApp.getActive().getSheetByName('Infrastructure').getRange(16, 2).getValue().toString()
+  return JSON.parse(stringCell)
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////// RECORDING ANY APPLICATION ERRORS FOR DEVELOPER //////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -97,31 +239,11 @@ function sendOrderActivityReport() {
 * @param {message} string The error message generated by the Script.
 */
 function addToDevLog(message) {
-  var props = PropertiesService.getDocumentProperties();
-  
-  /** Looks for or creates a developer log */
-  if (props.getProperty('devLog')) {
-    var devLog = props.getProperty('devLog');
-  } else {
-    var devLog = 'Start Developer Log:\n';
-  };
-  
-  /** Logs the message and stores it in props */
-  message = 'On ' + new Date() + ': ' + message + '\n';
-  devLog += message;
-  props.setProperty('devLog', devLog);
-};
-
-/** Gets developer logs and logs them to the console */
-function seeDevLogs() {
-  var props = PropertiesService.getDocumentProperties();
-  var devLog = props.getProperty('devLog');
-  Logger.log(devLog);
-};
-
-/** Clears developer logs */
-function clearDevLogs() {
-  var props = PropertiesService.getDocumentProperties().deleteProperty('devLog');
+  let date = new Date().toString()
+  const devSheet = SpreadsheetApp.getActive().getSheetByName('Developer')
+  devSheet.insertRowBefore(2)
+  devSheet.getRange(2, 1).setValue(date)
+  devSheet.getRange(2, 2).setValue(message)
 };
 
 
@@ -172,32 +294,5 @@ function seeScriptPropsValues() {
 function deleteScriptProps() {
   var keys = PropertiesService.getScriptProperties().deleteAllProperties();
 };
-
-/** Sets dummy data for Script Properties */
-function setDummyScriptPropsData() {
-  var props = PropertiesService.getScriptProperties();
-  props.setProperty('#K#2020-01-07T21:54:02.589Z', '#O#Davis Jones#F#Meg Media Inc.#C#4');
-  props.setProperty('#K#2020-02-07T21:54:02.589Z', '#O#Sandra Smith#F#Judo Law Firm#C#1');
-  props.setProperty('#K#2020-02-07T20:54:02.589Z', '#O#Bill Paxton#F#Coffee Legal Inc.#C#1');
-  props.setProperty('#K#2020-03-07T22:54:02.589Z', '#O#Dolly Parton#F#Hippy Law LLC#C#6');
-  props.setProperty('#K#2020-03-07T23:54:02.589Z', '#O#Johnny Cash#F#BBQ Legal Fund#C#7');
-  props.setProperty('#K#2020-03-07T23:55:02.589Z', '#O#Willie Nelson#F#Sushi Legal International#C#1');
-  props.setProperty('#K#2020-04-07T10:54:02.589Z', '#O#Jimi Hendrix#F#Jones Day Legal#C#1');
-  props.setProperty('#K#2020-04-07T11:54:02.589Z', '#O#John Medeski#F#San Antonio Law LLC#C#1');
-};
-
-/** Manually adds a script prop for Blake's report. */
-function manuallyAddScriptProp() {
-  addOrderToLog('Millennium Video', 'Lopez Law Goup PLLC');
-};
-
-
-
-
-
-
-
-
-
 
 

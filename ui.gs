@@ -39,8 +39,8 @@ function onOpen (e) {
 // Launches the new orderer sidebar (triggered from modal).
 function launchNewOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('newOrderer');
-  template.copyAttys = getCopyAttorneys();
-  template.previousLocations = getPreviousLocations();
+  template.copyAttys = returnCopyAttys();
+  template.previousLocations = returnLocations();
   var html = template.evaluate().setTitle('🆕 New Deposition from a New Orderer');
   SpreadsheetApp.getUi().showSidebar(html);
 };
@@ -66,9 +66,9 @@ function initiateRepeatOrdererModal() {
 // Creates the repeat orderer sidebar (triggered from modal).
 function launchRepeatOrdererSidebar() {
   var template = HtmlService.createTemplateFromFile('repeatOrderer');
-  template.orderers = getPreviousOrderers();
-  template.previousLocations = getPreviousLocations();
-  template.copyAttys = getCopyAttorneys();
+  template.orderers = returnPreviousOrderers();
+  template.previousLocations = returnLocations();
+  template.copyAttys = returnCopyAttys();
   var html = template.evaluate().setTitle('🔁 New Deposition from a Repeat Orderer');
   SpreadsheetApp.getUi().showSidebar(html);
 };
@@ -156,7 +156,19 @@ X 3. Enable mirroring of date, location, services, and time from Schedule a depo
    > services aren't on the current list
 X 4. Add a dropdown to sidebars with previous locations
 X 5. Hunt and remove bug causing Blake to get an extra report on Saturday
+
+--- Version 1.2, Started on Wednesday, April 22 ---
+X 1. Get the dropdowns going faster
+2. Alpha test the letter creation: 
+   How this works: Depo gets completed --> CR gives SALS transcript --> SALS sends a letter to all parties w/ a notice that 20 days to edit --> then, after 20, another letter saying result of editing period
+   Client name > Witness folder 
+3. Create a folder for clients when a depo is scheduled
+   File structure: Clients > Law Firm Name > MM-DD-YY + Witness Name
+   
+   Completed:
+   - Removed extra cells -- should improve performance
 */
+
 
 
 

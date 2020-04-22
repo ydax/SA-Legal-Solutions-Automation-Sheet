@@ -503,39 +503,6 @@ function updateSheetsOnTimeOrDateEdit(editRow) {
 //////////////////////////////////// UTILITIES /////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-/** Return a clean array of previous deposition orderers 
-* @return {array} Previous deposition orderers without duplicates, sorted alphabetically (by First Name).
-*/
-function getPreviousOrderers () {
-  var ss = SpreadsheetApp.getActive()
-  var depoSheet = ss.getSheetByName('Schedule a depo');
-  var lastDepoSheetRow = depoSheet.getLastRow();
-  var rawOrdererData = depoSheet.getRange(2, 4, lastDepoSheetRow, 1).getValues();
-  
-  // Creates a 2d array of previous orderers.
-  var firstLevelArray = [];
-  rawOrdererData.forEach(function(element) {
-    firstLevelArray.push(element[0]);
-  });
-  
-  /** Removes all elements that are empty strings from an array
-  */
-  function isntEmpty (element) {
-  return element != '';
-  };
-  
-  // Filter out empty strings, remove duplicate elements, and sort the array
-  var firstLevelEmptiesRemoved = firstLevelArray.filter(isntEmpty);
-  
-  var uniqueArray = firstLevelEmptiesRemoved.filter(function(elem, index, self) {
-    return index === self.indexOf(elem);
-  });
-  
-  var sortedUniqueArray = uniqueArray.sort();
-  
-  return sortedUniqueArray;
-};
-
 /** Prints an array to the final row of the "Schedule a depo" sheet
 @param {array} 1d array ordered to align with the columns in "Schedule a depo."
 */
@@ -596,90 +563,6 @@ function emailFromOrderer (orderer) {
   };
   
   return ordererEmail;
-};
-
-/** Returns an array of copy attorney arrays.
-* @return {copyAttys} Array of arrays of copy attorneys with each array structured like this: 
-* [Copy Atty, Copy Firm, Firm Address 1, Firm Address 2, City, State, Zip Phone, Email]
-*/
-function getCopyAttorneys () {
-  var ss = SpreadsheetApp.getActive();
-  var deposSheet = ss.getSheetByName('Schedule a depo');
-  var rawCopyAttys = deposSheet.getRange(2, 28, deposSheet.getLastRow(), 9).getValues();
-  
-  /** Removes all arrays that have an empty string for the copy attorney's name. */
-  for (var i = 0; i < rawCopyAttys.length; i++) {
-    if (rawCopyAttys[i][0] == '') {
-      rawCopyAttys.splice(i, 1);
-    };
-  };
-  
-  /** Sorts the array of copy attorney arrays alphabetically by name. */
-  var sortedCopyAttys = rawCopyAttys.sort(function(a, b) {
-
-    var nameA = a[0];
-    var nameB = b[0];
-    
-    if (nameA < nameB) {
-      return -1;
-    };
-    if (nameA > nameB) {
-      return 1;
-    };
-    
-    return 0;
-  });
-  
-  /** Removes duplicates from array of arrays. */
-  for (var i = 0; i < sortedCopyAttys.length; i++) {
-    if (i !== 0) {
-      var previousName = sortedCopyAttys[i -1][0];
-      var name = sortedCopyAttys[i][0];
-      if (previousName == name) {
-        sortedCopyAttys.splice(i, 1);
-      };
-    };
-  };
-  
-  /** Removes any empty arrays at the beginning of array of arrays. */
-  while(sortedCopyAttys[0][0] == '') {
-    sortedCopyAttys.splice(0, 1);
-  };
-
-  return sortedCopyAttys;
-};
-
-/** Returns an array of copy attorney arrays.
-* @return {copyAttys} Array of arrays of copy attorneys with each array structured like this: 
-* [Copy Atty, Copy Firm, Firm Address 1, Firm Address 2, City, State, Zip Phone, Email]
-*/
-function getPreviousLocations () {
-  var ss = SpreadsheetApp.getActive();
-  var deposSheet = ss.getSheetByName('Schedule a depo');
-  var rawLocations = deposSheet.getRange(2, 17, deposSheet.getLastRow(), 7).getValues();
-  
-  /** Sorts the array of copy attorney arrays alphabetically by name. */
-  var sortedLocations = rawLocations.sort(function(a, b) {
-
-    var nameA = a[0];
-    var nameB = b[0];
-    
-    if (nameA < nameB) {
-      return -1;
-    };
-    if (nameA > nameB) {
-      return 1;
-    };
-    
-    return 0;
-  });
-  
-  /** Removes any empty arrays at the beginning of array of arrays. */
-  while(sortedLocations[0][0] == '') {
-    sortedLocations.splice(0, 1);
-  };
-
-  return sortedLocations;
 };
 
 
