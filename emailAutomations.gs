@@ -142,6 +142,95 @@ function resendConfirmationEmail () {
   SpreadsheetApp.getActiveSpreadsheet().toast('✅ Confirmation email successfully re-sent.');
 };
 
+/** Sends a status update with a list of outstanding videos to be processed. 
+1. Send a status update with a list of outstanding videos to be processed. 
+Shannon is wanting an email on M / W 9am that goes to the videographer, Scott (on all of them), and Shannon. 
+Only depos in the past. Only deps that have 'Yes' in the Videographer colum in L.
+Needs to tell them the status of the data in columns M, N, and O.
+Cluster by Zack, Manny, or Scott in Videographers, anyone else say "Other Depos Waiting to be Processed" w/ data in colums A - C.
+*/
+function sendVideoStatusEmail() {
+  const ss = SpreadsheetApp.getActive();
+  const currentList = ss.getSheetByName('Current List');
+  
+  // Gets the rows in Current List representing depos prior to today
+  const currentListRows = currentList.getRange(2, 1, currentList.getLastRow(), 17).getValues();
+  const now = getMMDDDate();
+  let notProcessed = [];
+  for (var i = 0; i < currentListRows.length; i++) {
+    ///////////////////////////
+    // FINDING RELEVANT ROWS //
+    ///////////////////////////
+    let date = currentListRows[i][0];
+    let processedStatus = currentListRows[i][12];
+    let hasVideo = currentListRows[i][7];
+    let monthValue = parseInt(date.substring(0, 2));
+    let nowMonthValue = parseInt(now.substring(0, 2));
+    let dayValue = parseInt(date.substring(3, 5));
+    let nowDayValue = parseInt(now.substring(3, 5));
+    
+    if (monthValue < nowMonthValue && processedStatus !== 'Processed' && hasVideo === 'Yes') {
+      notProcessed.push(currentListRows[i])
+    };
+
+    if (monthValue === nowMonthValue && dayValue <= nowDayValue && processedStatus !== 'Processed' && hasVideo === 'Yes') {
+      notProcessed.push(currentListRows[i])
+    };
+  };
+  
+  
+  ///////////////////////
+  // STRUCTURING EMAIL //
+  ///////////////////////
+  
+  /** Sorts data array from current list by Videographer name */
+  var sortedArray = notProcessed.sort(function(a, b) {
+    
+    var nameA = a[11];
+    var nameB = b[11];
+    
+    if (nameA < nameB) {
+      return -1;
+    };
+    if (nameA > nameB) {
+      return 1;
+    };
+    
+    return 0;
+  });
+
+  
+  let body = 'Howdy. Here\'s a video processing status update for you.\n\n\nASSIGNED DEPOS WAITING TO BE PROCESSED:\n\n';
+  sortedArray.forEach(function(depo) {
+    if (depo[11] === 'Manny' || depo[11] === 'Sam' || depo[11] === 'Scott' || depo[11] === 'Zach') {
+      let witness = depo[1];
+      let client = depo[2];
+      let teamMember= depo[11];
+      let videoStatus = depo[12];
+      let exhibitsStatus = depo[13];
+      let paperworkStatus = depo[14];
+      body = body + teamMember + ' | ' + witness + ' for ' + client + '\nVideo Status: ' + videoStatus + ' , Exhibits status: ' + exhibitsStatus + ' , Paperwork status: ' + paperworkStatus + '\n\n';
+    };    
+  });
+  
+  body = body + '\n\OTHER DEPOS WAITING TO BE PROCESSED:\n'
+  
+  sortedArray.forEach(function(depo) {
+    if (depo[11] !== 'Manny' || depo[11] !== 'Sam' || depo[11] !== 'Scott' || depo[11] !== 'Zach') {
+      let date = depo[0];
+      let witness = depo[1];
+      let client = depo[2];
+      body = body + '• ' + witness + ' for ' + client + ' on ' + date + '\n';
+    };
+  });
+  
+  body = body + '\n\nNote: Any depos not marked "Processed" in column L and "Yes" in column H that are before today in the Current List will appear in this automated report.';
+  const subject = 'Video Processing Status Update for ' + now;
+  
+  // Sends email
+  GmailApp.sendEmail('shannonk@salegalsolutions.com', subject, body, { cc: 'swoody@salegalsolutions.com, zmata@salegalsolutions.com, mvasquez@salegasloutions.com, shedemann@salegalsolutions.com', name: 'SALS Automations' });
+};
+
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// UTILITIES /////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -260,4 +349,9 @@ function seeDrafts () {
   });
 };
 
+/** Returns a date formatted MM-DD to match format of Current List */
+function getMMDDDate() {
+  let today = new Date().toISOString();
+  return today.substring(5, 10);
+};
 
