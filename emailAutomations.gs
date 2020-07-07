@@ -5,12 +5,16 @@
 /** Sends an email confirmation to deposition orderer
 @params {multiple} strings Arguments passed from the getDepositionData functions originating in the New Depositions sidebars
 */
-function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC) {
+function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC, videoPlatform) {
   try {
     // Re-format date, time, location
     var date = formatDateForEmail(depoDate);
     var depoTime = depoHour + ':' + depoMinute + ' ' + amPm;
     var depoLocation = locationFirm + ', ' + locationAddress1 + ', ' + locationAddress2 + ', ' + locationCity + ' ' + locationState + ' ' + locationZip;
+    // If depo is via video conference, re-format depoLocation
+    if (videoPlatform.length > 2) {
+      depoLocation = 'via ' + videoPlatform;
+    };
     var firstName = firstNameOnly(orderedBy);
     
     // Convert courtReporter, videographer, and PIP into bool

@@ -6,7 +6,7 @@
 * @params {multiple} strings, bool Values from the form deployed through Google Sheet.
 * @return Sequential array of values.
 */
-function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, attorneyEmail, attorneyPhone, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation, confirmationCC) {
+function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, attorneyEmail, attorneyPhone, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation, confirmationCC, videoPlatform, salsAccount, conferenceDetails) {
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
   
@@ -24,6 +24,11 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
     pip = 'Yes';
   } else {
     pip = 'No';
+  };
+  
+  // Converts location information to video conferencing info if appropriate
+  if (videoPlatform.length > 2) {
+    locationFirm = 'via ' + videoPlatform;
   };
   
   // Begins construction of deposition information array
@@ -51,12 +56,12 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   SpreadsheetApp.getActiveSpreadsheet().toast('🗓 Confirmation of Scheduling updated');
   
   // Adds the deposition to the Services calendar and logs it for internal record keeping.
-  var event = addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  var event = addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, videoPlatform, salsAccount, conferenceDetails);
   addOrderToLog(orderedBy, firm);
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
   if (sendConfirmation === true) {
-    sendConfirmationToOrderer(orderedBy, orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC);
+    sendConfirmationToOrderer(orderedBy, orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC, videoPlatform);
     SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
   };
   
@@ -67,7 +72,7 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
 * @params {multiple} strings, bool Values from the form deployed through Google Sheet.
 * @return Sequential array of values.
 */
-function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation, confirmationCC) {
+function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation, confirmationCC, videoPlatform, salsAccount, conferenceDetails) {
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
   
@@ -96,6 +101,11 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
     pip = 'Yes';
   } else {
     pip = 'No';
+  };
+  
+  // Converts location information to video conferencing info if appropriate
+  if (videoPlatform.length > 2) {
+    locationFirm = 'via ' + videoPlatform;
   };
 
   newScheduledDepo.push(locationFirm); 
@@ -142,12 +152,12 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
 
   
   // Adds the deposition to the Services calendar and logs it.
-  addEvent(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  addEvent(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, infoFromPreviousOrderer[0], infoFromPreviousOrderer[1], infoFromPreviousOrderer[2], infoFromPreviousOrderer[3], infoFromPreviousOrderer[4], infoFromPreviousOrderer[5], infoFromPreviousOrderer[6], locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, videoPlatform, salsAccount, conferenceDetails);
   addOrderToLog(previousOrderer, infoFromPreviousOrderer[0]);
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
   if (sendConfirmation === true) {
-    sendConfirmationToOrderer(previousOrderer, ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC);
+    sendConfirmationToOrderer(previousOrderer, ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC, videoPlatform);
     SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
   };
   

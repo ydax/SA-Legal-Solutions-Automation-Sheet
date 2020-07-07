@@ -51,9 +51,27 @@
                    $('#copyPhone').val(), 
                    $('#copyEmail').val(),
                    $('#sendConfirmation').prop('checked'),
-                   $('#confirmationCC').val()
+                   $('#confirmationCC').val(),
+                   $('#videoPlatform').val(),
+                   $('#salsAccount').val(),
+                   $('#conferenceDetails').val()
                 );
              };
+    </script>
+    
+    <!-- Toggles video conference vs. physical location inputs in location -->
+    <script type="text/javascript">
+      function lookForVideoConference(val) {
+        var videoConferenceDiv = document.getElementById('videoConferenceDiv');
+        var physicalLocationDiv = document.getElementById('physicalLocationDiv');
+        if (val == 'Video Conference') {
+          videoConferenceDiv.style.display = 'block';
+          physicalLocationDiv.style.display = 'none';
+        } else {
+          videoConferenceDiv.style.display='none';
+          physicalLocationDiv.style.display='block';
+        }
+      }
     </script>
 </head>
 
@@ -131,42 +149,68 @@
                     </p>
                 </div>
                 <div class="collapsible-body">
-                    <blockquote>Enter a new deposition location manually or autofill by selecting a location from the
+                    <blockquote>Add video conference info, enter a new location, or autofill by selecting a physical location from the
                         dropdown menu.</blockquote>
                     <div class="input-field col s12">
-                        <select class="prevLocation" name="prevLocation" id="prevLocation">
+                        <select 
+                          class="prevLocation" 
+                          name="prevLocation" 
+                          id="prevLocation" 
+                          onchange='lookForVideoConference(this.value);'
+                        >
                             <option value="" disabled selected>Select Location</option>
+                            <option value="Video Conference">Video Conference</option>
+                            <option disabled>─ ─ ─ ─ ─ ─ ─ ─ ─</option>
                             <? for (var i = 0; i < previousLocations.length; i++) { ?>
                             <option value="<?= i; ?>"><?= previousLocations[i][0]; ?></option>
                             <? } ?>
                         </select>
                     </div>
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">business</i>
-                        <input type="text" id="locationFirm" name="locationFirm">
+                    <div id="videoConferenceDiv" style='display:none;'>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">video_settings</i>
+                          <input type="text" id="videoPlatform" name="videoPlatform">
+                          <label for="videoPlatform">Video Conference Platform</label>
+                      </div>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">live_tv</i>
+                          <input type="text" id="salsAccount" name="salsAccount">
+                          <label for="salsAccount">SALS Conference Account</label>
+                      </div>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">subtitles</i>
+                          <textarea class="materialize-textarea" id="conferenceDetails" name="conferenceDetails"></textarea>
+                          <label for="conferenceDetails">Video Conference Details</label>
+                      </div>
                     </div>
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">add_location</i>
-                        <input type="text" id="locationAddress1" name="locationAddress1">
-                    </div>
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">add_location</i>
-                        <input type="text" id="locationAddress2" name="locationAddress2">
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s6">
-                            <input type="text" value="San Antonio" id="locationCity" name="locationCity">
-                        </div>
-                        <div class="input-field col s2">
-                            <input type="text" value="TX" id="locationState" name="locationState">
-                        </div>
-                        <div class="input-field col s4">
-                            <input type="text" placeholder="78232" id="locationZip" name="locationZip">
-                        </div>
-                    </div>
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">phone</i>
-                        <input type="text" id="locationPhone" name="locationPhone">
+                    <div id="physicalLocationDiv">
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">business</i>
+                          <input type="text" id="locationFirm" name="locationFirm">
+                      </div>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">add_location</i>
+                          <input type="text" id="locationAddress1" name="locationAddress1">
+                      </div>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">add_location</i>
+                          <input type="text" id="locationAddress2" name="locationAddress2">
+                      </div>
+                      <div class="row">
+                          <div class="input-field col s6">
+                              <input type="text" value="San Antonio" id="locationCity" name="locationCity">
+                          </div>
+                          <div class="input-field col s2">
+                              <input type="text" value="TX" id="locationState" name="locationState">
+                          </div>
+                          <div class="input-field col s4">
+                              <input type="text" placeholder="78232" id="locationZip" name="locationZip">
+                          </div>
+                      </div>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">phone</i>
+                          <input type="text" id="locationPhone" name="locationPhone">
+                      </div>
                     </div>
                 </div>
             </li>
