@@ -6,7 +6,7 @@
 * @params {multiple} strings, bool Values from the form deployed through Google Sheet.
 * @return Sequential array of values.
 */
-function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, attorneyEmail, attorneyPhone, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation) {
+function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, firm, attorney, attorneyEmail, attorneyPhone, firmAddress1, firmAddress2, city, state, zip, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation, confirmationCC) {
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
   
@@ -56,7 +56,7 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
   if (sendConfirmation === true) {
-    sendConfirmationToOrderer(orderedBy, orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+    sendConfirmationToOrderer(orderedBy, orderedByEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC);
     SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
   };
   
@@ -67,7 +67,7 @@ function getNewDepositionData(orderedBy,orderedByEmail, witnessName, caseStyle, 
 * @params {multiple} strings, bool Values from the form deployed through Google Sheet.
 * @return Sequential array of values.
 */
-function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation) {
+function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDate, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, locationPhone, services, courtReporter, videographer, pip, copyAttorney, copyFirm, copyAddress1, copyAddress2, copyCity, copyState, copyZip, copyPhone, copyEmail, sendConfirmation, confirmationCC) {
   // Updates progress to user through the sidebar UI
   SpreadsheetApp.getActiveSpreadsheet().toast('🚀️ Automation initiated');
   
@@ -147,7 +147,7 @@ function getRepeatDepositionData(previousOrderer, witnessName, caseStyle, depoDa
   
   // If it was checked in the sidebar, sends a confirmation email to orderer
   if (sendConfirmation === true) {
-    sendConfirmationToOrderer(previousOrderer, ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+    sendConfirmationToOrderer(previousOrderer, ordererEmail, caseStyle, depoDate, witnessName, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC);
     SpreadsheetApp.getActiveSpreadsheet().toast('📧 Confirmation email sent to orderer');
   };
   

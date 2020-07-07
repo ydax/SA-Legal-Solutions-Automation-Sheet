@@ -5,7 +5,7 @@
 /** Sends an email confirmation to deposition orderer
 @params {multiple} strings Arguments passed from the getDepositionData functions originating in the New Depositions sidebars
 */
-function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip) {
+function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC) {
   try {
     // Re-format date, time, location
     var date = formatDateForEmail(depoDate);
@@ -54,18 +54,30 @@ function sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate,
     template = template.replace(/pipInfo/, pip);
     
     // Sends the confirmation email.
-    GmailApp.sendEmail(
-      ordererEmail, 
-      // Confirmation of Witness name | Doe v. Doe | Date
-      'Confirmation of ' + witness + ' Deposition | ' + caseStyle + ' | ' + date, 
-      'Hello ' + firstName + ',\n\nThanks for sending this assignment to SA Legal Solutions. Our understanding of your requested resources & services are detailed below:\n• Case: ' + caseStyle + '\n• Witness: ' + witness + '\n• Date: ' + date + '\n• Time: ' + depoTime + '\n• Location: ' + depoLocation + '\n• Services: ' + services + '\n• Court reporter? ' + reporter + '\n• Videographer? ' + video + '\n• Picture-in-Picture? ' + includesPip + '\n\nA PDF version of this scheduling confirmation is available for your convenience and records here: ' + pdfUrl + '\n\nIf any changes are necessary, please let us know. Thanks for your business!\n\nSA Legal Solutions | Litigation Support Specialists\nPhone: 210-591-1791\nAddress: 3201 Cherry Ridge, B 208-3, SATX 78230\nWebsite: www.salegalsolutions.com\nEmail: depos@salegalsolutions.com', 
+    if (confirmationCC.length > 1) {
+      GmailApp.sendEmail(
+        ordererEmail, 
+        'Confirmation of ' + witness + ' Deposition | ' + caseStyle + ' | ' + date, 
+        'Hello ' + firstName + ',\n\nThanks for sending this assignment to SA Legal Solutions. Our understanding of your requested resources & services are detailed below:\n• Case: ' + caseStyle + '\n• Witness: ' + witness + '\n• Date: ' + date + '\n• Time: ' + depoTime + '\n• Location: ' + depoLocation + '\n• Services: ' + services + '\n• Court reporter? ' + reporter + '\n• Videographer? ' + video + '\n• Picture-in-Picture? ' + includesPip + '\n\nA PDF version of this scheduling confirmation is available for your convenience and records here: ' + pdfUrl + '\n\nIf any changes are necessary, please let us know. Thanks for your business!\n\nSA Legal Solutions | Litigation Support Specialists\nPhone: 210-591-1791\nAddress: 3201 Cherry Ridge, B 208-3, SATX 78230\nWebsite: www.salegalsolutions.com\nEmail: depos@salegalsolutions.com', 
+        {
+        attachments: [blob],
+        htmlBody: template,
+        name: 'SA Legal Solutions',
+        bcc: 'shannonk@salegalsolutions.com',
+        cc: confirmationCC
+        });
+    } else {
+      GmailApp.sendEmail(
+        ordererEmail, 
+        'Confirmation of ' + witness + ' Deposition | ' + caseStyle + ' | ' + date, 
+        'Hello ' + firstName + ',\n\nThanks for sending this assignment to SA Legal Solutions. Our understanding of your requested resources & services are detailed below:\n• Case: ' + caseStyle + '\n• Witness: ' + witness + '\n• Date: ' + date + '\n• Time: ' + depoTime + '\n• Location: ' + depoLocation + '\n• Services: ' + services + '\n• Court reporter? ' + reporter + '\n• Videographer? ' + video + '\n• Picture-in-Picture? ' + includesPip + '\n\nA PDF version of this scheduling confirmation is available for your convenience and records here: ' + pdfUrl + '\n\nIf any changes are necessary, please let us know. Thanks for your business!\n\nSA Legal Solutions | Litigation Support Specialists\nPhone: 210-591-1791\nAddress: 3201 Cherry Ridge, B 208-3, SATX 78230\nWebsite: www.salegalsolutions.com\nEmail: depos@salegalsolutions.com', 
       {
-      attachments: [blob],
-      htmlBody: template,
-      name: 'SA Legal Solutions',
-      bcc: 'shannonk@salegalsolutions.com'
-      }
-    );
+        attachments: [blob],
+        htmlBody: template,
+        name: 'SA Legal Solutions',
+        bcc: 'shannonk@salegalsolutions.com'
+      });
+    }
   } catch (error) {
     Logger.log(error);
   }

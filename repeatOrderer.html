@@ -50,7 +50,8 @@
                    $('#copyZip').val(),
                    $('#copyPhone').val(), 
                    $('#copyEmail').val(),
-                   $('#sendConfirmation').prop('checked')
+                   $('#sendConfirmation').prop('checked'),
+                   $('#confirmationCC').val()
                 );
              };
     </script>
@@ -270,6 +271,10 @@
                 <input type="checkbox" id="sendConfirmation" />
                 <span>Send confirmation email to orderer?</span>
             </label>
+            <div class="input-field">
+                <input type="text" id="confirmationCC" name="confirmationCC">
+                <label for="confirmationCC">(Optional) CC for Confirmation Email</label>
+            </div>
         </div>
 
         <!-- Submission Button -->

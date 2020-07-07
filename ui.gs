@@ -175,7 +175,7 @@ Shannon is wanting an email on M / W 9am that goes to the videographer, Scott (o
 Only depos in the past. Only deps that have 'Yes' in the Videographer colum in L.
 Needs to tell them the status of the data in columns M, N, and O.
 Cluster by Zack, Manny, or Scott in Videographers, anyone else say "Other Depos Waiting to be Processed" w/ data in colums A - C.
-2. Shannon wants the confirmation of scheduling can have a CC. Need to add this option below "Send confirmation email to orderer?" in sidebar.
+X 2. Shannon wants the confirmation of scheduling can have a CC. Need to add this option below "Send confirmation email to orderer?" in sidebar.
 3. Enable the location to be the Zoom link in the sidebar. Sometimes they'll need to call in, sometimes they'll need a password.
 Solution: force the "Location" to have a Zoom and WebEx options, if selected, have a details Textarea created, and a SALS Zoom account field
 pop up where the person can type in the account.
