@@ -143,6 +143,15 @@ function resendConfirmationEmail () {
   var copyPhone = rowData[33];
   var copyEmail = rowData[34];
   
+  // Instantiates variables related to video conferencing logic in sendConfirmationToOrderer.
+  let videoPlatform
+  if (locationFirm.substring(0, 3) === 'via') {
+    videoPlatform = locationFirm.substring(4, locationFirm.length);
+  } else {
+    videoPlatform = '';
+  }
+  var confirmationCC = '';
+  
   // Restructures time variables to format expected by sendConfirmationToOrderer function.
   var depoHourMatch = depoTime.match(/.*:/)[0];
   var depoHour = depoHourMatch.substring(0, depoHourMatch.length - 1);
@@ -154,7 +163,7 @@ function resendConfirmationEmail () {
   var unformattedDepoDate = dateFromHour(depoTime, currentRow).toString();
   var depoDate = unformattedDepoDate.substring(0, 10);
   
-  sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip);
+  sendConfirmationToOrderer(orderedBy, ordererEmail, caseStyle, depoDate, witness, depoHour, depoMinute, amPm, locationFirm, locationAddress1, locationAddress2, locationCity, locationState, locationZip, services, courtReporter, videographer, pip, confirmationCC, videoPlatform);
   SpreadsheetApp.getActiveSpreadsheet().toast('✅ Confirmation email successfully re-sent.');
 };
 
