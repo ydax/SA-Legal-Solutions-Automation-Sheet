@@ -244,7 +244,7 @@ function sendVideoStatusEmail() {
   const subject = 'Video Processing Status Update for ' + now;
   
   // Sends email
-  GmailApp.sendEmail('shannonk@salegalsolutions.com', subject, body, { cc: 'swoody@salegalsolutions.com, zmata@salegalsolutions.com, mvasquez@salegasloutions.com, shedemann@salegalsolutions.com', name: 'SALS Automations' });
+  GmailApp.sendEmail('shannonk@salegalsolutions.com', subject, body, { cc: 'swoody@salegalsolutions.com, zmata@salegalsolutions.com, mvasquez@salegalsolutions.com, shedemann@salegalsolutions.com', name: 'SALS Automations' });
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -273,7 +273,6 @@ function firstNameOnly(orderer) {
 @params {multiple} strings Deposition information that will be included in the confirmation email.
 @return {pdfUrl} string URL (file hosted on Google Drive) where the confirmation PDF can be found.
 */
-
 function createPDFConfirmation (orderedBy, caseStyle, depoDate, witness, depoTime, depoLocation, services, courtReporter, videographer, pip) {
   SpreadsheetApp.getActiveSpreadsheet().toast('📝 Started Creating Confirmation PDF');
   

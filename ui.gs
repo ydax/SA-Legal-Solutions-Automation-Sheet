@@ -170,7 +170,7 @@ X 1. Get the dropdowns going faster
 
 
 --- Version 1.3, Started July 7 2020 ---
-1. Send a status update with a list of outstanding videos to be processed. 
+X 1. Send a status update with a list of outstanding videos to be processed. 
 Shannon is wanting an email on M / W 9am that goes to the videographer, Scott (on all of them), and Shannon. 
 Only depos in the past. Only deps that have 'Yes' in the Videographer colum in L.
 Needs to tell them the status of the data in columns M, N, and O.
@@ -179,7 +179,6 @@ X 2. Shannon wants the confirmation of scheduling can have a CC. Need to add thi
 X 3. Enable the location to be the Zoom link in the sidebar. Sometimes they'll need to call in, sometimes they'll need a password.
 Solution: force the "Location" to have a Zoom and WebEx options, if selected, have a details Textarea created, and a SALS Zoom account field
 pop up where the person can type in the account.
-4. 
 */
 
 
