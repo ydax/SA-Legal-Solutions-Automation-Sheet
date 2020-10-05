@@ -329,8 +329,8 @@ function updateCurrentList (depoDate, witnessName, firm, city, courtReporter, vi
   };
   
   // Trims depoDate down to MM-DD format.
-  depoDate = depoDate.toString();
-  depoDate = depoDate.substring(5, 10);
+  // 2020-10-10
+  depoDate = depoDate.toString(); // $$$
   
   // Prints values to Current List Sheet.
   currentListSheet.insertRowBefore(2);
@@ -343,6 +343,9 @@ function updateCurrentList (depoDate, witnessName, firm, city, courtReporter, vi
   currentListSheet.getRange('H2').setValue(hasVideo);
   currentListSheet.getRange('J2').setValue(pip);
   currentListSheet.getRange('L2').setValue(videographer);
+  
+  // Sorts the current list by date (first column) (disabled -- it messes with hidden rows)
+  // currentListSheet.getRange(2, 1, currentListSheet.getLastRow() + 1, currentListSheet.getLastColumn()).sort(1)
 };
 
 /** Updates the Video Worksheet with the most recently-entered deposition information.
@@ -576,6 +579,37 @@ function emailFromOrderer (orderer) {
 };
 
 
+// Converts all dates in Current List to 2020-10-10 format
+function convertDates() {
+  var ss = SpreadsheetApp.getActive();
+  var currentList = ss.getSheetByName('Current List');
+  
+  // Instantiates data ranges and references
+  var rowCount = currentList.getLastRow() - 1
+  var range = currentList.getRange(2, 1, rowCount, 1)
+  var data = range.getValues()
+  
+  // Loops over each, formats the string, and replaces if necessary
+  for (var i = 0; i < data.length; i++) {
+    var dateString = data[i][0]
+    if (dateString.length == 5) {
+      try {
+        var newDate = '2020-' + dateString
+        var row = i + 2
+        currentList.getRange(row, 1).setValue(newDate)
+      } catch (error) {
+        cosole.log(error)
+      }
+    }
+  }
+  // currentList.getRange(1, currentList.getLastColumn(), currentList.getLastRow(), currentList.getLastColumn()).sort(1)
+}
+
+function test() {
+  var ss = SpreadsheetApp.getActive();
+  var currentList = ss.getSheetByName('Current List');
+  currentList.getRange(2, 1, currentList.getLastRow(), currentList.getLastColumn()).sort(1)
+}
 
 
 

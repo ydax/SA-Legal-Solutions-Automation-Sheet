@@ -11,10 +11,6 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
   var ss = SpreadsheetApp.getActive();
   var depoSheet = ss.getSheetByName('Schedule a depo');
   
-  //////////////////////////////////////////////////////
-  Logger.log('depoDate from inside addEvent: ' + depoDate);
-  //////////////////////////////////////////////////////
-  
   try {
     // Create event title and description
     var title = '(' + services + ')' + ' ' + firm + ' - ' + witnessName;
