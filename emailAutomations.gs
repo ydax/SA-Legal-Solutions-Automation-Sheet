@@ -252,7 +252,7 @@ function sendVideoStatusEmail() {
   const subject = 'Video Processing Status Update for ' + now;
   
   // Sends email
-  GmailApp.sendEmail('davis@eazl.co', subject, body) // shannonk@salegalsolutions.com , { cc: 'swoody@salegalsolutions.com, zmata@salegalsolutions.com, mvasquez@salegalsolutions.com, shedemann@salegalsolutions.com', name: 'SALS Automations' });
+  GmailApp.sendEmail('shannonk@salegalsolutions.com', subject, body, { cc: 'swoody@salegalsolutions.com, zmata@salegalsolutions.com, mvasquez@salegalsolutions.com, shedemann@salegalsolutions.com', name: 'SALS Automations' });
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
