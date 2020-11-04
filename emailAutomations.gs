@@ -2,7 +2,6 @@
 /////////////// DEPLOYING TEMPLATED EMAILS BASED ON SHEET ACTIVITIES ///////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-
 /** Sends an email confirmation to deposition orderer
 @params {multiple} strings Arguments passed from the getDepositionData functions originating in the New Depositions sidebars
 */
@@ -190,9 +189,9 @@ function sendVideoStatusEmail() {
     let date = currentListRows[i][0];
     let processedStatus = currentListRows[i][12];
     let hasVideo = currentListRows[i][7];
-    let monthValue = parseInt(date.substring(0, 2));
+    let monthValue = parseInt(date.substring(5, 7)); // Because current list format is YYYY-MM-DD
     let nowMonthValue = parseInt(now.substring(0, 2));
-    let dayValue = parseInt(date.substring(3, 5));
+    let dayValue = parseInt(date.substring(8, 10)); // Because current list format is YYYY-MM-DD
     let nowDayValue = parseInt(now.substring(3, 5));
     
     if (monthValue < nowMonthValue && processedStatus !== 'Processed' && hasVideo === 'Yes') {
@@ -203,7 +202,6 @@ function sendVideoStatusEmail() {
       notProcessed.push(currentListRows[i])
     };
   };
-  
   
   ///////////////////////
   // STRUCTURING EMAIL //
@@ -254,7 +252,7 @@ function sendVideoStatusEmail() {
   const subject = 'Video Processing Status Update for ' + now;
   
   // Sends email
-  GmailApp.sendEmail('shannonk@salegalsolutions.com', subject, body, { cc: 'swoody@salegalsolutions.com, zmata@salegalsolutions.com, mvasquez@salegalsolutions.com, shedemann@salegalsolutions.com', name: 'SALS Automations' });
+  GmailApp.sendEmail('davis@eazl.co', subject, body) // shannonk@salegalsolutions.com , { cc: 'swoody@salegalsolutions.com, zmata@salegalsolutions.com, mvasquez@salegalsolutions.com, shedemann@salegalsolutions.com', name: 'SALS Automations' });
 };
 
 ////////////////////////////////////////////////////////////////////////////////////

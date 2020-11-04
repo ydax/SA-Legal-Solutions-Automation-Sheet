@@ -27,12 +27,14 @@ function addEvent(orderedBy, witnessName, caseStyle, depoDate, depoHour, depoMin
     };
     
     // Subtracts one hour from depo hour, because for some reason this script is an hour off and I can't figure out why. I know this is hacky.
+    /**
     depoHour = parseInt(depoHour, 10);
     if (depoHour !== 1) {
       depoHour--
     } else {
       depoHour = 12;
     };
+    */
     
     // Add the deposition event to the Services calendar
     var formattedDate = toStringDate(depoDate);
